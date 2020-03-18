@@ -55,15 +55,7 @@
         id="txtUsername"
         maxlength="8"
         placeholder="Enter you username (8 characters max)..."
-        style="width:54%;"
-        class="bb"
-      />
-      <input
-        type="text"
-        id="txtPort"
-        maxlength="8"
-        placeholder="port (3000)"
-        style="width:15%;"
+        style="width:70%;"
         class="bb"
       />
       <button id="btnConnect" style="width:18%;" class="bb">
@@ -91,7 +83,6 @@
       // init some vars
       let socket;
       let textUser = document.getElementById("txtUsername");
-      let textPort = document.getElementById("txtPort");
       let textMessage = document.getElementById("txtInput");
       let btnConnect = document.getElementById("btnConnect");
       let btnSend = document.getElementById("btnSend");
@@ -101,7 +92,6 @@
       btnSend.addEventListener("click", sendText);
       textMessage.addEventListener("keypress", messageKeyPressed);
       textUser.addEventListener("keypress", connectKeyPressed);
-      textPort.addEventListener("keypress", connectKeyPressed);
 
       // websocket functions
       function WSconnect() {
@@ -118,9 +108,7 @@
         if (socket) socket.close();
 
         // parse address
-        let port = textPort.value === "" ? 3000 : textPort.value;
-        let host = location.origin.replace(/^http/, "ws").split(":");
-        host = host[0] + ":" + host[1] + ":" + port;
+        let host = location.origin.replace(/^http/, "ws");
 
         // open socket
         socket = new WebSocket(host);
@@ -209,6 +197,7 @@
         // if Enter is pressed, let's connect
         if (e.key === "Enter") WSconnect();
       }
+      // Convert string to array
       function str2a(str) {
         let a = str.split("");
         for (let i = 0; i < a.length; i++) {
@@ -216,6 +205,7 @@
         }
         return a;
       }
+      // Convert buffer to string
       function ab2str(b) {
         let s = "";
         for (let i = 0; i < b.length; i++) {

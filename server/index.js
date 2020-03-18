@@ -5,10 +5,8 @@ const fs = require("fs");
 
 // set some constants
 const HEARTBEAT_INTERVAL = 2000; // 2 seconds
-const WS_PORT = 3000;
 const HTTP_PORT = 8000;
-const HTTP_ADDRESS = "127.0.0.1";
-const HEARTBEAT_ENABLED = false;
+const HEARTBEAT_ENABLED = false; // disable for now because of an issue with FCEUX...
 
 // init http server
 let httpServer = http
@@ -20,20 +18,16 @@ let httpServer = http
     response.write(indexHTML);
     response.end();
   })
-  // specify ip address to force ipv4, no address for ipv6
-  .listen(HTTP_PORT, HTTP_ADDRESS, function() {
+  .listen(process.env.PORT || HTTP_PORT, function() {
     console.log(
-      `HTTP server listening, open your browser at http://${HTTP_ADDRESS}:${HTTP_PORT}`
+      `HTTP server listening on port ${process.env.PORT || HTTP_PORT}`
     );
   });
 
 // init websocket server
-const wss = new WebSocket.Server(
-  { server: httpServer, port: WS_PORT },
-  function() {
-    console.log(`WebSocket server listening on port ${this.address().port}`);
-  }
-);
+const wss = new WebSocket.Server({ server: httpServer }, function() {
+  console.log(`WebSocket server listening...`);
+});
 
 // handle new connections
 wss.on("connection", function(socket) {
@@ -46,18 +40,15 @@ wss.on("connection", function(socket) {
 
   // broadcast received messages to every other clients
   socket.on("message", function(msg) {
-    //console.log(msg);
-    // convert buffer to array
-    //data = msg.slice(0, 1); //[...msg];
-    //console.log(data);
-
-    // get first element in buffer
+    // get first element (opcode) from buffer
     let opcode = msg.readUInt8(0);
-    let data = msg.slice(1);
+
+    // get text and remove accents
     let text = ab2str(msg.slice(1))
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
+    // handle opcodes
     switch (opcode) {
       case 0:
         let welcome = `${text} joined the chat!`;
@@ -79,11 +70,12 @@ wss.on("connection", function(socket) {
         });
         break;
       default:
-        console.log(data);
+        console.log(`Unknown opcode: ${opcode} / message: ${msg.slice(1)}`);
         break;
     }
   });
 
+  // close event...
   socket.on("close", function() {
     console.log("socket close event...");
   });
@@ -105,16 +97,14 @@ wss.on("connection", function(socket) {
 });
 
 // heartbeat handler
-if (HEARTBEAT_ENABLED) {
-  const interval = setInterval(function ping() {
-    wss.clients.forEach(function each(socket) {
+const interval = setInterval(function ping() {
+  wss.clients.forEach(function each(socket) {
+    if (HEARTBEAT_ENABLED)
       if (socket.isAlive === false) return socket.terminate();
-
-      socket.isAlive = false;
-      socket.ping(noop);
-    });
-  }, HEARTBEAT_INTERVAL);
-}
+    socket.isAlive = false;
+    socket.ping(noop);
+  });
+}, HEARTBEAT_INTERVAL);
 
 // heartbeat functions
 function noop() {}
@@ -122,13 +112,13 @@ function heartbeat() {
   this.isAlive = true;
 }
 
+// helpers to convert ArrayBuffer <=> String
 // source: http://stackoverflow.com/a/11058858
 function ab2str(buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
 }
-
 function str2ab(str) {
-  var buf = new ArrayBuffer(str.length); // 2 bytes for each char
+  var buf = new ArrayBuffer(str.length);
   var bufView = new Uint8Array(buf);
   for (var i = 0, strLen = str.length; i < strLen; i++) {
     bufView[i] = str.charCodeAt(i);
