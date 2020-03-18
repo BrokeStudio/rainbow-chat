@@ -1,0 +1,16 @@
+{
+  "name": "rainbow-chat",
+  "build": 243,
+  "version": "0.0.1",
+  "romName": "rainbow-chat",
+  "objPath": "obj",
+  "romsPath": "roms",
+  "bin": "local",
+  "sources": [
+    "src/main.s"
+  ],
+  "libraries": [
+    "src/libs/**/*.s",
+    "src/nes-lib/**/*.s"
+  ]
+}

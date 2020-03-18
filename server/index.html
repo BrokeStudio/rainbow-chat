@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Rainbow - chat example</title>
+    <meta name="description" content="Rainbow - chat example" />
+    <meta name="author" content="Broke Studio" />
+    <style>
+      body,
+      html {
+        background: #f7f8fa;
+        font-family: \"Lato\",Helvetica,arial,sans-serif;
+        color: #676767;
+        padding: 5px;
+      }
+
+      .center-div {
+        width: 500px;
+        background-color: #f7f8fa;
+        box-shadow: 0px 0px 10px #c5c5c5;
+        border-radius: 5px;
+        margin: 0 auto;
+        padding: 5px;
+      }
+      .bb {
+        box-sizing: border-box;
+      }
+      h1 {
+        text-align: center;
+      }
+      #chat {
+        width: 100%;
+        height: 300px;
+        box-sizing: border-box;
+        border: 1px solid #ababab;
+        margin-bottom: 10px;
+        overflow: auto;
+      }
+      #chat span {
+        width: 100%;
+        box-sizing: border-box;
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="center-div">
+      <h1>Rainbow - chat example</h1>
+      <span style="width:10%;" class="bb">Name:&nbsp;</span
+      ><input
+        type="text"
+        id="txtUsername"
+        maxlength="8"
+        placeholder="Enter you username (8 characters max)..."
+        style="width:54%;"
+        class="bb"
+      />
+      <input
+        type="text"
+        id="txtPort"
+        maxlength="8"
+        placeholder="port (3000)"
+        style="width:15%;"
+        class="bb"
+      />
+      <button id="btnConnect" style="width:18%;" class="bb">
+        Connect
+      </button>
+      <hr />
+      <div id="chat" contenteditable="true"></div>
+      <input
+        type="text"
+        id="txtInput"
+        maxlength="28"
+        placeholder="Enter text here (28 characters max)..."
+        style="width:80%;"
+        class="bb"
+        disabled="true"
+      />
+      <button id="btnSend" style="width:19%;" class="bb" disabled="true">
+        Send
+      </button>
+
+      <br />
+    </div>
+
+    <script>
+      // init some vars
+      let socket;
+      let textUser = document.getElementById("txtUsername");
+      let textPort = document.getElementById("txtPort");
+      let textMessage = document.getElementById("txtInput");
+      let btnConnect = document.getElementById("btnConnect");
+      let btnSend = document.getElementById("btnSend");
+      let chat = document.getElementById("chat");
+
+      btnConnect.addEventListener("click", WSconnect);
+      btnSend.addEventListener("click", sendText);
+      textMessage.addEventListener("keypress", messageKeyPressed);
+      textUser.addEventListener("keypress", connectKeyPressed);
+      textPort.addEventListener("keypress", connectKeyPressed);
+
+      // websocket functions
+      function WSconnect() {
+        // trim spaces from username
+        let username = textUser.value.trim();
+
+        // check if empty
+        if (username === "") return;
+
+        // log
+        console.log("connecting...");
+
+        // close socket if already open
+        if (socket) socket.close();
+
+        // parse address
+        let port = textPort.value === "" ? 3000 : textPort.value;
+        let host = location.origin.replace(/^http/, "ws").split(":");
+        host = host[0] + ":" + host[1] + ":" + port;
+
+        // open socket
+        socket = new WebSocket(host);
+
+        // set socket so we receive binary data
+        socket.binaryType = "arraybuffer";
+
+        // handle "open" event
+        socket.onopen = () => {
+          // register username
+          let data = str2a(username);
+          data.unshift(0);
+          socket.send(new Uint8Array(data));
+
+          // update UI
+          textUser.disabled = true;
+          btnConnect.disabled = true;
+          textMessage.disabled = false;
+          btnSend.disabled = false;
+          textMessage.focus();
+        };
+
+        // handle "close" event
+        socket.onclose = () => {
+          // log
+          console.log("disconnected...");
+
+          // update UI
+          textUser.disabled = false;
+          btnConnect.disabled = false;
+          textMessage.disabled = true;
+          btnSend.disabled = true;
+        };
+
+        // handle new messages
+        socket.onmessage = message => {
+          // convert buffer to Uint8Array
+          data = new Uint8Array(message.data);
+
+          // get opcode
+          // 0 - new user joined the chat
+          // 1 - new message from user
+          let opcode = data.slice(0, 1);
+
+          // get text
+          let text = ab2str(data.slice(1));
+
+          // \0 character is here to separate username from actual user message
+          // let's replace it
+          text = text.replace("\0", ": ");
+
+          // create new span element to add to our chat window
+          var span = document.createElement("span");
+
+          // text will be green if a new user joined the chat
+          if (opcode[0] == 0) span.style = "color:green;";
+          span.innerText = text;
+
+          // add the span element at the top of the chat window
+          chat.insertBefore(span, chat.children[0]);
+        };
+      }
+
+      // send our message
+      function sendText() {
+        // trim spaces
+        let msg = textMessage.value.trim();
+
+        // check if empty
+        if (msg === "") return;
+
+        // convert text to binary data
+        // add 1 at the beginning because we're sending a new message
+        let data = str2a(msg);
+        data.unshift(1);
+        socket.send(new Uint8Array(data));
+
+        // reset input field
+        textMessage.value = "";
+      }
+      function messageKeyPressed(e) {
+        // if Enter is pressed, send message
+        if (e.key === "Enter") sendText();
+      }
+      function connectKeyPressed(e) {
+        // if Enter is pressed, let's connect
+        if (e.key === "Enter") WSconnect();
+      }
+      function str2a(str) {
+        let a = str.split("");
+        for (let i = 0; i < a.length; i++) {
+          a[i] = a[i].charCodeAt(0);
+        }
+        return a;
+      }
+      function ab2str(b) {
+        let s = "";
+        for (let i = 0; i < b.length; i++) {
+          s += String.fromCharCode(b[i]);
+        }
+        return s;
+      }
+    </script>
+  </body>
+</html>

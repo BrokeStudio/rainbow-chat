@@ -1,0 +1,3 @@
+/bin/*.exe
+/roms/bak/*
+/server/node_modules
