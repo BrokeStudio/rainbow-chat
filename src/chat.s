@@ -2,8 +2,8 @@
 ; CONSTANTS
 
 ; uncomment BOTH lines to hardcode server hostname and port
-;.define SERVER_HOSTNAME "192.168.2.20"
-;SERVER_PORT = 3000
+;.define SERVER_HOSTNAME "127.0.0.1"
+;SERVER_PORT = 8000
 
 ; ################################################################################
 ; ZEROPAGE + MISC

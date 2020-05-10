@@ -1,4 +1,4 @@
-# RAINBOW CHAT for the NES
+# RAINBOW CHAT demo for the NES
 
 > &nbsp;  
 > Here's a quick tutorial on how to use this online chat demo for the NES.  
@@ -6,7 +6,8 @@
 
 #### changelog
 
-_2020/03/17_ - v1.0 - initial release
+_2020/03/17_ - v1.0 - initial release  
+_2020/05/10_ - v1.1 - code updated to support new rainbow mapper / doc a bit updated too  
 
 ## SERVER
 
@@ -28,7 +29,7 @@ Look for HTTP_PORT (8000 by default) and change their values (don't forget to re
 Now that the server is up, you can open your browser and visit http://127.0.0.1:8000 or http://localhost:8000.  
 This will allow you to check if everything works correctly and to communicate with the NES later.
 
-UI is pretty straightforward, enter a user name, leave the port text field empty to use the default value (3000) or enter a new one if you changed it, and click on **Connect**.
+UI is pretty straightforward, enter a user name and click on **Connect**.
 
 Then at the bottom, in the message field, enter a message and press **ENTER** or click on **Send** to send the message.
 
@@ -38,10 +39,10 @@ To use the NES client, you need a custom version of FCEUX including the online f
 
 You can download a compiled build for Windows here: http://brokestudio.fr/rainbow/fceux_wifi.zip
 
-Or you can build it yourself by cloning this GIT repository: https://github.com/sgadrat/fceux (branch rainbow, not master)
+Or you can build it yourself by cloning this GIT repository: https://github.com/BrokeStudio/fceux (branch rainbow, not master).
 
-Just load the ROM **rainbow-chat.nes** file into FCEUX, enter the IP address of the server, the port, a username, and that should do it :)  
-You should be able to exchange messages with the WEB client now. You can even add another (or more) WEB client(s) to the game for more fun. I didn't tested it with more than 3 clients in total so...
+Just load the ROM **rainbow-chat.nes** file into FCEUX, enter the IP address of the server (127.0.0.1 should work if you didn't change anything), the port (8000 should work if you didn't change anything), a username, and that should do it :)  
+You can now exchange messages with the WEB client. You can even add another (or more) WEB client(s) / FCEUX emu to the game for more fun. I didn't tested it with more than 3 clients in total so...
 
 ## ROM COMPILATION
 

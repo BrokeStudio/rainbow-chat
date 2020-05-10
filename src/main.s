@@ -18,14 +18,20 @@
 .import NES_MAPPER
 .import NES_PRG_BANKS,NES_CHR_BANKS,NES_MIRRORING
 
-.byte $4E,$45,$53,$1A   ; 'NES' + $1A
-.byte <NES_PRG_BANKS
-.byte <NES_CHR_BANKS
-.byte <(NES_MIRRORING|(NES_MAPPER&$0F)<<4)|%00000010
-.byte <((NES_MAPPER&$F0)|%00001000) ; upper nybble of mapper number + iNES 2.0
-.byte <((NES_MAPPER&$F00)>>8)
-.byte $00, $00
-.byte $07, $00, $00, $00, $00 ; padding
+; NES 2.0 format
+.byte "NES", $1A      ; flags 0-3: ines magic
+.byte <NES_PRG_BANKS  ; flag 4
+.byte <NES_CHR_BANKS  ; flag 5
+.byte <(NES_MIRRORING|(NES_MAPPER&$0F)<<4) ; flag 6
+.byte <((NES_MAPPER&$F0)|%00001000) ; flag 7: upper nybble of mapper number + iNES 2.0
+.byte <((NES_MAPPER&$F00)>>8) ; flag 8
+.byte 0 ; flag 9
+.byte 0 ; flag 10: PRG-RAM shift counter - (64 << shift counter)
+.byte 9 ; flag 11: CHR-RAM shift counter - (64 << shift counter)
+.byte $00   ; flag 12
+.byte $00   ; flag 13
+.byte $00   ; flag 14
+.byte $00   ; flag 15
 
 ; ################################################################################
 ; ZEROPAGE
@@ -163,6 +169,14 @@ apu_clear_loop:
   ; disable ESP for now
   lda #0
   sta $5001
+
+  ; mapper init
+  lda #%00011100
+  sta $5006
+
+  ; select 8K CHR bank
+  lda #0
+  sta $5400
 
   ; set palette brightness
   lda #4

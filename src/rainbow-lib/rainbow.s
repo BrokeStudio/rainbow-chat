@@ -1,13 +1,14 @@
 ; ################################################################################
-; RAINBOW MODULE
-.out "# rainbow library..."
+; RAINBOW LIBRARY
+.out "# Rainbow library..."
 
 .scope RNBW
 
 ; ################################################################################
 ; INCLUDES
 
-  .include "rainbow-constants.h"
+  .include "rainbow-config.s"
+  .include "rainbow-constants.s"
 
 ; ################################################################################
 ; ALIASES
@@ -27,19 +28,23 @@
 ; ################################################################################
 ; MACROS
 
+.if .not .definedmacro(RNBW_waitResponse)
   .macro RNBW_waitResponse
     ; wait for response
   :
     bit $5001
     bpl :-
   .endmacro
+.endif
 
+.if .not .definedmacro(RNBW_waitAnswer)
   .macro RNBW_waitAnswer
     ; wait for response
   :
     bit $5001
     bpl :-
   .endmacro
+.endif
 
 ; ################################################################################
 ; CODE
@@ -193,8 +198,7 @@
     sta $5000
 
     ; wait for answer
-  :  
-    ;lda $5001
+  :
     bit $5001
     bpl :-
 
@@ -218,8 +222,7 @@
     sta $5000
 
     ; wait for answer
-  :  
-    ;lda $5001
+  :
     bit $5001
     bpl :-
 

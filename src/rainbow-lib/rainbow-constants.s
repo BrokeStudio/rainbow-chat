@@ -1,8 +1,8 @@
 ; ################################################################################
 ; RAINBOW CONSTANTS
 
-BUF_IN        = $0300
-BUF_OUT       = $0380
+NUM_PATHS     = 3
+NUM_FILES     = 64
 
 ; NES to ESP opcodes
 .enum N2E
@@ -11,6 +11,7 @@ BUF_OUT       = $0380
   GET_ESP_STATUS
   DEBUG_LOG
   CLEAR_BUFFERS
+  E2N_BUFFER_DROP
   GET_WIFI_STATUS
   GET_RND_BYTE
   GET_RND_BYTE_RANGE ; min / max
@@ -19,6 +20,7 @@ BUF_OUT       = $0380
 
 ; SERVER CMDS
   GET_SERVER_STATUS
+  GET_SERVER_PING
   SET_SERVER_PROTOCOL
   GET_SERVER_SETTINGS
   SET_SERVER_SETTINGS
@@ -35,11 +37,10 @@ BUF_OUT       = $0380
   FILE_READ
   FILE_WRITE
   FILE_APPEND
-  GET_FILE_LIST
-  GET_FREE_FILE_ID
-
-; DEBUG
-  GET_N_BYTES = 254
+  FILE_COUNT
+  FILE_GET_LIST
+  FILE_GET_FREE_ID
+  FILE_GET_INFO
 
 .endenum
 
@@ -48,21 +49,22 @@ BUF_OUT       = $0380
   READY
 
   FILE_EXISTS
+  FILE_DELETE
   FILE_LIST
   FILE_DATA
+  FILE_COUNT
   FILE_ID
+  FILE_INFO
 
   WIFI_STATUS
   SERVER_STATUS
+  SERVER_PING
   HOST_SETTINGS
 
   RND_BYTE
   RND_WORD
   
   MESSAGE_FROM_SERVER
-
-  SUCCESS = 254
-  ERROR = 255
 .endenum
 
 ; WiFi status
@@ -87,8 +89,6 @@ BUF_OUT       = $0380
 .enum SERVER_STATUS
   DISCONNECTED
   CONNECTED
-  AUTH_SUCCESS
-  AUTH_FAILED
 .endenum
 
 ; File paths
@@ -96,10 +96,4 @@ BUF_OUT       = $0380
   SAVE
   ROMS
   USER
-.endenum
-
-; Errors
-.enum ERRORS
-  FILE_DELETE
-  FILE_DOES_NOT_EXIST
 .endenum
