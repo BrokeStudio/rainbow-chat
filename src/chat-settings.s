@@ -180,7 +180,6 @@ skipDigit:
     ; if string is too long, abort...
     rts
 :
-:
   sta usernameLength
 
   ; copy username string

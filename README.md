@@ -8,6 +8,7 @@
 
 _2020/03/17_ - v1.0 - initial release  
 _2020/05/10_ - v1.1 - code updated to support new rainbow mapper / doc a bit updated too  
+_2020/07/15_ - v1.2 - code updated to match last rainbow wifi protocol update + doc updated
 
 ## SERVER
 
@@ -37,7 +38,7 @@ Then at the bottom, in the message field, enter a message and press **ENTER** or
 
 To use the NES client, you need a custom version of FCEUX including the online functionnalities.
 
-You can download a compiled build for Windows here: http://brokestudio.fr/rainbow/fceux_wifi.zip
+You can download a compiled build for Windows here: http://brokestudio.fr/rainbow
 
 Or you can build it yourself by cloning this GIT repository: https://github.com/BrokeStudio/fceux (branch rainbow, not master).
 
@@ -46,7 +47,9 @@ You can now exchange messages with the WEB client. You can even add another (or 
 
 ## ROM COMPILATION
 
-The _compile.bat_ file expects some executable frome the **cc65** suite in the _bin_ folder (see _readme.txt_ file in the _bin_ folder).
+At the top of the _chat.s_ file, you can comment/uncomment 2 lines to hardcode IP address and port.  
+
+The _compile.bat_ file expects some executable from the **cc65** suite in the _bin_ folder (see _readme.txt_ file in the _bin_ folder).
 
 **_OR_**
 
