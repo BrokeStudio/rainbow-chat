@@ -13,13 +13,13 @@
 ;  ; clear buffers
 ;  lda #1
 ;  sta $5000
-;  lda #RNBW::N2E::CLEAR_BUFFERS
+;  lda #RNBW::TO_ESP::CLEAR_BUFFERS
 ;  sta $5000
 
   ; set server protocol
   lda #2
   sta $5000
-  lda #RNBW::N2E::SET_SERVER_PROTOCOL
+  lda #RNBW::TO_ESP::SERVER_SET_PROTOCOL
   sta $5000
   lda #RNBW::SERVER_PROTOCOLS::WS
   sta $5000
@@ -28,7 +28,7 @@
 .ifdef SERVER_PORT
   lda #( 3 + .strlen(SERVER_HOSTNAME) )
   sta $5000
-  lda #RNBW::N2E::SET_SERVER_SETTINGS
+  lda #RNBW::TO_ESP::SERVER_SET_SETTINGS
   sta $5000
   lda #>SERVER_PORT
   sta $5000
@@ -47,7 +47,7 @@
   adc hostnameLength
   sta $5000
  
-  lda #RNBW::N2E::SET_SERVER_SETTINGS
+  lda #RNBW::TO_ESP::SERVER_SET_SETTINGS
   sta $5000
   lda port+0
   sta $5000
@@ -75,7 +75,7 @@ connectToServer:
   ; send command
   lda #1
   sta $5000
-  lda #RNBW::N2E::CONNECT_SERVER
+  lda #RNBW::TO_ESP::SERVER_CONNECT
   sta $5000
 
   ; let's ask for server status every 2 seconds
@@ -93,7 +93,7 @@ wait2seconds:
   ; check server status
   lda #1
   sta $5000
-  lda #RNBW::N2E::GET_SERVER_STATUS
+  lda #RNBW::TO_ESP::SERVER_GET_STATUS
   sta $5000
 
   ; wait for answer
@@ -123,7 +123,7 @@ connected:
   clc
   adc usernameLength
   sta $5000
-  lda #RNBW::N2E::SEND_MSG_TO_SERVER
+  lda #RNBW::TO_ESP::SERVER_SEND_MESSAGE
   sta $5000
   ldx #0
   stx $5000

@@ -126,10 +126,10 @@ TEXT_MAX_LENGTH     = 28
 
   ; init Rainbow output buffer
   ; message format is:
-  ; length | N2E::SEND_MSG_TO_SERVER | 0x01 (new msg opcode) | message / string ...
+  ; length | TO_ESP::SERVER_SEND_MESSAGE | 0x01 (new msg opcode) | message / string ...
   ;lda #2
   ;sta RNBW::BUF_OUT+0    ; no need to set the length yet
-  lda #RNBW::N2E::SEND_MSG_TO_SERVER
+  lda #RNBW::TO_ESP::SERVER_SEND_MESSAGE
   sta RNBW::BUF_OUT+1
   lda #1
   sta RNBW::BUF_OUT+2
@@ -411,6 +411,8 @@ skipSTARTpressed:
   sta RNBW::BUF_OUT+0
 
   ; send data using the Rainbow output buffer
+  lda #<RNBW::BUF_OUT
+  ldx #>RNBW::BUF_OUT
   jsr RNBW::sendData
 
   ; clear text input
@@ -439,7 +441,7 @@ skipSTARTpressed:
 
   ; is it a message from server ?
   lda RNBW::BUF_IN+1
-  cmp #RNBW::E2N::MESSAGE_FROM_SERVER
+  cmp #RNBW::FROM_ESP::MESSAGE_FROM_SERVER
   beq :+
     ; if not, ignore the message for now...
 
