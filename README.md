@@ -59,7 +59,7 @@ just update the _compile.bat_ file to point to your files directly.
 
 Thanks to Sylvain Gadrat aka _RogerBidon_ for his awesome work on FCEUX. Thanks for adding Rainbow mapper support ! <3
 
-For more information on the Rainbow project, you can check its documentation (look for the 'rainbow-doc.md' file) or directly online: https://hackmd.io/@BrokeStudio/B1nU790HI
+For more information on the Rainbow project, you can check its documentation here: https://github.com/BrokeStudio/rainbow-lib/blob/master/rainbow-wifi.md
 
 ## /!\ IMPORTANT NOTE /!\
 
