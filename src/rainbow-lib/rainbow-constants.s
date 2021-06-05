@@ -54,6 +54,7 @@
   FILE_GET_FREE_ID                ; Get an unexisting file ID in a specific path
   FILE_GET_INFO                   ; Get file info (size + crc32)
   FILE_DOWNLOAD                   ; Download a file
+  FILE_FORMAT                     ; Format file system and save current config
 
 .endenum
 
@@ -145,6 +146,7 @@ NUM_FILES = 64
   SUCCESS
   ERROR_WHILE_DELETING_FILE
   FILE_NOT_FOUND
+  INVALID_PATH_OR_FILE
 .endenum
 
 ; FILE_DOWNLOAD return values
@@ -152,6 +154,7 @@ NUM_FILES = 64
   SUCCESS
   ERROR_WHILE_DELETING_FILE
   DOWNLOAD_FAILED
+  INVALID_PATH_OR_FILE
 .endenum
 
 ; Rainbow registers
