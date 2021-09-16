@@ -2,8 +2,8 @@
 ; CONSTANTS
 
 ; uncomment BOTH lines to hardcode server hostname and port
-;.define SERVER_HOSTNAME "127.0.0.1"
-;SERVER_PORT = 8000
+.define SERVER_HOSTNAME "127.0.0.1"
+SERVER_PORT = 8000
 
 ; ################################################################################
 ; ZEROPAGE + MISC
@@ -146,7 +146,7 @@ TEXT_MAX_LENGTH     = 28
 .proc chatLoop
 
   ; check for incomming data from ESP
-  bit $5001
+  bit MAP_ESP_CONFIG
   bpl :+
     jsr processData
 :

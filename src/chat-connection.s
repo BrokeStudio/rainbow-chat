@@ -4,39 +4,40 @@
 .proc chatConnect
 
   ; enable ESP
-  lda #$01
-  sta $5001
+  lda #1
+  sta MAP_ESP_CONFIG
+  nop
 
   ; don't need to clear the buffers here, at least for now
   ; also, after clearing buffers, you should send anything else right away
   ; you need to wait for xxxxx(?) cycles (TBD)
 ;  ; clear buffers
 ;  lda #1
-;  sta $5000
+;  sta MAP_ESP_DATA
 ;  lda #RNBW::TO_ESP::CLEAR_BUFFERS
-;  sta $5000
+;  sta MAP_ESP_DATA
 
   ; set server protocol
   lda #2
-  sta $5000
+  sta MAP_ESP_DATA
   lda #RNBW::TO_ESP::SERVER_SET_PROTOCOL
-  sta $5000
+  sta MAP_ESP_DATA
   lda #RNBW::SERVER_PROTOCOLS::WS
-  sta $5000
+  sta MAP_ESP_DATA
 
   ; set server host name and port
 .ifdef SERVER_PORT
   lda #( 3 + .strlen(SERVER_HOSTNAME) )
-  sta $5000
+  sta MAP_ESP_DATA
   lda #RNBW::TO_ESP::SERVER_SET_SETTINGS
-  sta $5000
+  sta MAP_ESP_DATA
   lda #>SERVER_PORT
-  sta $5000
+  sta MAP_ESP_DATA
   lda #<SERVER_PORT
-  sta $5000
+  sta MAP_ESP_DATA
   .repeat .strlen(SERVER_HOSTNAME),I
     lda #.strat(SERVER_HOSTNAME,I)
-    sta $5000
+    sta MAP_ESP_DATA
   .endrepeat
 
 .else
@@ -45,18 +46,18 @@
   lda #3
   clc
   adc hostnameLength
-  sta $5000
+  sta MAP_ESP_DATA
  
   lda #RNBW::TO_ESP::SERVER_SET_SETTINGS
-  sta $5000
+  sta MAP_ESP_DATA
   lda port+0
-  sta $5000
+  sta MAP_ESP_DATA
   lda port+1
-  sta $5000
+  sta MAP_ESP_DATA
   ldx #0
 :
   lda hostname,x
-  sta $5000
+  sta MAP_ESP_DATA
   inx
   cpx hostnameLength
   bne :-
@@ -74,9 +75,9 @@ connectToServer:
 
   ; send command
   lda #1
-  sta $5000
+  sta MAP_ESP_DATA
   lda #RNBW::TO_ESP::SERVER_CONNECT
-  sta $5000
+  sta MAP_ESP_DATA
 
   ; let's ask for server status every 2 seconds
   ; if we're still not connected after 20 seconds
@@ -92,23 +93,23 @@ wait2seconds:
 
   ; check server status
   lda #1
-  sta $5000
+  sta MAP_ESP_DATA
   lda #RNBW::TO_ESP::SERVER_GET_STATUS
-  sta $5000
+  sta MAP_ESP_DATA
 
   ; wait for answer
 :
-  bit $5001
+  bit MAP_ESP_CONFIG
   bpl :-
 
   ; get data
-  lda $5000 ; dummy read
+  lda MAP_ESP_DATA ; dummy read
   nop
-  lda $5000 ; length (don't care)
+  lda MAP_ESP_DATA ; length (don't care)
   nop
-  lda $5000 ; command (don't care)
+  lda MAP_ESP_DATA ; command (don't care)
   nop
-  lda $5000 ; server status
+  lda MAP_ESP_DATA ; server status
   cmp #RNBW::SERVER_STATUS::CONNECTED
   beq connected
 
@@ -122,14 +123,14 @@ connected:
   lda #2
   clc
   adc usernameLength
-  sta $5000
+  sta MAP_ESP_DATA
   lda #RNBW::TO_ESP::SERVER_SEND_MESSAGE
-  sta $5000
+  sta MAP_ESP_DATA
   ldx #0
-  stx $5000
+  stx MAP_ESP_DATA
 :
   lda username,x
-  sta $5000
+  sta MAP_ESP_DATA
   inx
   cpx usernameLength
   bne :-

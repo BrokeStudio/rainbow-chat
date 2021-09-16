@@ -46,7 +46,7 @@ rnbwTmp:  .res 2
   .macro RNBW_waitResponse
     ; wait for response
   :
-    bit $5001
+    bit $4101
     bpl :-
   .endmacro
 .endif
@@ -55,7 +55,7 @@ rnbwTmp:  .res 2
   .macro RNBW_waitAnswer
     ; wait for response
   :
-    bit $5001
+    bit $4101
     bpl :-
   .endmacro
 .endif
@@ -66,9 +66,9 @@ rnbwTmp:  .res 2
   .proc RNBW_disableIRQ
 
     ; disable ESP IRQ
-    lda $5001
+    lda $4101
     and #$3f
-    sta $5001
+    sta $4101
 
     ; return
     rts
@@ -78,9 +78,9 @@ rnbwTmp:  .res 2
   .proc RNBW_enableIRQ
 
     ; disable ESP IRQ
-    lda $5001
+    lda $4101
     ora #$40
-    sta $5001
+    sta $4101
 
     ; return
     rts
@@ -100,7 +100,7 @@ rnbwTmp:  .res 2
     inx
   :
     lda (rnbwTmp),y
-    sta $5000
+    sta $4100
     iny
     dex
     bne :-
@@ -111,13 +111,13 @@ rnbwTmp:  .res 2
 
   .proc RNBW_getData
 
-    lda $5000         ; dummy read
+    lda $4100         ; dummy read
     nop               ; seems to be needed when a long message is coming
-    ldx $5000         ; get bytes number
+    ldx $4100         ; get bytes number
     stx BUF_IN+0
     ldy #1
   :
-    lda $5000
+    lda $4100
     sta BUF_IN,Y
     iny
     dex
@@ -132,13 +132,13 @@ rnbwTmp:  .res 2
 
     ; ask for ESP status
     lda #1
-    sta $5000
+    sta $4100
     lda #TO_ESP::ESP_GET_STATUS
-    sta $5000
+    sta $4100
 
     ; wait for answer
   :
-    bit $5001
+    bit $4101
     bpl :-
 
     ; get data
@@ -146,7 +146,7 @@ rnbwTmp:  .res 2
 
     ; make sure that the data ready flag is cleared
   :
-    bit $5001
+    bit $4101
     bmi :-
 
 /*
@@ -154,7 +154,7 @@ rnbwTmp:  .res 2
     cmp #FROM_ESP::READY
     beq done
 
-    lda $5001
+    lda $4101
 
   done:
 */
@@ -169,11 +169,11 @@ rnbwTmp:  .res 2
     ; data to debug in A
     pha
     lda #2
-    sta $5000
+    sta $4100
     lda #TO_ESP::DEBUG_LOG
-    sta $5000
+    sta $4100
     pla
-    sta $5000 ; DATA
+    sta $4100 ; DATA
 
     ; return
     rts
@@ -184,10 +184,10 @@ rnbwTmp:  .res 2
 
     ; data to debug in X
     lda #2
-    sta $5000
+    sta $4100
     lda #TO_ESP::DEBUG_LOG
-    sta $5000
-    stx $5000 ; DATA
+    sta $4100
+    stx $4100 ; DATA
 
     ; return
     rts
@@ -198,10 +198,10 @@ rnbwTmp:  .res 2
   
     ; data to debug in Y
     lda #2
-    sta $5000
+    sta $4100
     lda #TO_ESP::DEBUG_LOG
-    sta $5000
-    sty $5000 ; DATA
+    sta $4100
+    sty $4100 ; DATA
 
     ; return
     rts
@@ -212,13 +212,13 @@ rnbwTmp:  .res 2
 
     ; ask for wifi status
     lda #1
-    sta $5000
+    sta $4100
     lda #TO_ESP::WIFI_GET_STATUS
-    sta $5000
+    sta $4100
 
     ; wait for answer
   :
-    bit $5001
+    bit $4101
     bpl :-
 
     ; get data
@@ -236,13 +236,13 @@ rnbwTmp:  .res 2
 
     ; ask for server status
     lda #1
-    sta $5000
+    sta $4100
     lda #TO_ESP::SERVER_GET_STATUS
-    sta $5000
+    sta $4100
 
     ; wait for answer
   :
-    bit $5001
+    bit $4101
     bpl :-
 
     ; get data
@@ -259,9 +259,9 @@ rnbwTmp:  .res 2
   .proc RNBW_getRandomByte
 
     lda #1
-    sta $5000
+    sta $4100
     lda #TO_ESP::RND_GET_BYTE
-    sta $5000
+    sta $4100
     RNBW_waitResponse
     jmp RNBW_getData
 
@@ -272,11 +272,11 @@ rnbwTmp:  .res 2
     ; Y: max
 
     lda #3
-    sta $5000
+    sta $4100
     lda #TO_ESP::RND_GET_BYTE_RANGE
-    sta $5000
-    stx $5000
-    sty $5000
+    sta $4100
+    stx $4100
+    sty $4100
     RNBW_waitResponse
     jmp RNBW_getData
 
@@ -285,9 +285,9 @@ rnbwTmp:  .res 2
   .proc RNBW_getRandomWord
 
     lda #1
-    sta $5000
+    sta $4100
     lda #TO_ESP::RND_GET_WORD
-    sta $5000
+    sta $4100
     RNBW_waitResponse
     jmp RNBW_getData
 
@@ -298,11 +298,11 @@ rnbwTmp:  .res 2
     ; Y: max
 
     lda #3
-    sta $5000
+    sta $4100
     lda #TO_ESP::RND_GET_WORD_RANGE
-    sta $5000
-    stx $5000
-    sty $5000
+    sta $4100
+    stx $4100
+    sty $4100
     RNBW_waitResponse
     jmp RNBW_getData
 

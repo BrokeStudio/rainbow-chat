@@ -17,7 +17,27 @@
 .segment "HEADER"
 .import NES_MAPPER
 .import NES_PRG_BANKS,NES_CHR_BANKS,NES_MIRRORING
-
+/*
+; NES 2.0 format
+.byte $4E,$45,$53,$1A   ; 'NES' + $1A
+.byte <NES_PRG_BANKS
+.if CHR_CHIPS = RNBW_CHR_RAM
+  .byte 0
+.else
+  .byte <NES_CHR_BANKS
+.endif
+.byte <(NES_MIRRORING|(NES_MAPPER&$0F)<<4) ; |%00000010 ; let's disable battery save for now
+.byte <((NES_MAPPER&$F0)|%00001000) ; upper nybble of mapper number + iNES 2.0
+.byte <((NES_MAPPER&$F00)>>8)
+.byte $00
+.byte 9 ; PRG-RAM shift counter - (64 << shift counter)
+.if CHR_CHIPS <> RNBW_CHR_ROM
+  .byte 9 ; CHR-RAM shift counter - (64 << shift counter)
+.else
+  .byte 0
+.endif
+.byte $00, $00, $00, $00 ; padding
+*/
 ; NES 2.0 format
 .byte "NES", $1A      ; flags 0-3: ines magic
 .byte <NES_PRG_BANKS  ; flag 4
@@ -74,6 +94,8 @@ zp31:               .res 1
 
 ; ################################################################################
 ; INCLUDES
+
+.include "mapper-registers.s"
 
 ; NES LIB
 ; based on Shiru's code: https://shiru.untergrund.net/code.shtml
@@ -168,15 +190,15 @@ apu_clear_loop:
 
   ; disable ESP for now
   lda #0
-  sta $5001
+  sta MAP_ESP_CONFIG
 
   ; mapper init
   lda #%00011100
-  sta $5006
+  sta MAP_CONFIG
 
   ; select 8K CHR bank
   lda #0
-  sta $5400
+  sta MAP_CHR_0
 
   ; set palette brightness
   lda #4
