@@ -6,10 +6,9 @@
 
 #### changelog
 
-_2020/03/17_ - initial release  
-_2020/05/10_ - code updated to support new rainbow mapper + doc updated  
-_2020/07/15_ - code updated to match last rainbow wifi protocol update + doc updated  
-_2022/02/23_ - code updated to match last rainbow wifi protocol update + asm6 version added
+_2020/03/17_ - v1.0 - initial release  
+_2020/05/10_ - v1.1 - code updated to support new rainbow mapper / doc a bit updated too  
+_2020/07/15_ - v1.2 - code updated to match last rainbow wifi protocol update + doc updated
 
 ## SERVER
 
@@ -24,14 +23,14 @@ Congratulations, the server should now be up!
 
 **NOTE:**  
 You can modify http server port in the **_index.js_** file.  
-Look for HTTP_PORT (8000 by default) and change its value (don't forget to restart the server).
+Look for HTTP_PORT (8000 by default) and change their values (don't forget to restart the server).
 
 ## WEB CLIENT
 
-Now that the server is up and running, you can open your browser and visit http://127.0.0.1:8000 or http://localhost:8000.  
+Now that the server is up, you can open your browser and visit http://127.0.0.1:8000 or http://localhost:8000.  
 This will allow you to check if everything works correctly and to communicate with the NES later.
 
-UI is straightforward, enter a user name and click on **Connect**.
+UI is pretty straightforward, enter a user name and click on **Connect**.
 
 Then at the bottom, in the message field, enter a message and press **ENTER** or click on **Send** to send the message.
 
@@ -48,28 +47,19 @@ You can now exchange messages with the WEB client. You can even add another (or 
 
 ## ROM COMPILATION
 
-### ASM6
+At the top of the _chat.s_ file, you can comment/uncomment 2 lines to hardcode IP address and port.  
 
-At the top of the `chat.asm` file, you can comment/uncomment 1 lines to hardcode IP address and port.  
-Values can be changed in `chat-connection.asm` at lines ~27-56.  
+The _compile.bat_ file expects some executable from the **cc65** suite in the _bin_ folder (see _readme.txt_ file in the _bin_ folder).
 
-The `compile.bat` file expects some **asm6.exe** executable in the same folder.  
+**_OR_**
 
-### CC65
-
-At the top of the `chat.s` file, you can comment/uncomment 2 lines to hardcode IP address and port.  
-
-The `compile.bat` file expects some executable from the **cc65** suite in the _bin_ folder (see `readme.txt` file in the `bin` folder)
-
-_OR_
-
-just update the `compile.bat` file to point to your files directly.
+just update the _compile.bat_ file to point to your files directly.
 
 ## INFO / DOCUMENTATION
 
 Thanks to Sylvain Gadrat aka _RogerBidon_ for his awesome work on FCEUX. Thanks for adding Rainbow mapper support ! <3
 
-For more information on the Rainbow project, you can check its documentation here: https://github.com/BrokeStudio/rainbow-lib
+For more information on the Rainbow project, you can check its documentation here: https://github.com/BrokeStudio/rainbow-lib/blob/master/rainbow-wifi.md
 
 ## /!\ IMPORTANT NOTE /!\
 

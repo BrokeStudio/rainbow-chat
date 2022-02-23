@@ -5,39 +5,35 @@
 
   ; enable ESP
   lda #1
-  sta MAP_ESP_CONFIG
-  nop
-
-  ; don't need to clear the buffers here, at least for now
-  ; also, after clearing buffers, you should send anything else right away
-  ; you need to wait for xxxxx(?) cycles (TBD)
-;  ; clear buffers
-;  lda #1
-;  sta MAP_ESP_DATA
-;  lda #RNBW::TO_ESP::CLEAR_BUFFERS
-;  sta MAP_ESP_DATA
+  sta RNBW::CONFIG
 
   ; set server protocol
   lda #2
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_SET_PROTOCOL
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+1
   lda #RNBW::SERVER_PROTOCOLS::WS
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+2
+  sta RNBW::TX
+
+  ; wait for message to be sent
+:
+  bit RNBW::TX
+  bpl :-
 
   ; set server host name and port
 .ifdef SERVER_PORT
   lda #( 3 + .strlen(SERVER_HOSTNAME) )
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_SET_SETTINGS
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+1
   lda #>SERVER_PORT
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+2
   lda #<SERVER_PORT
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+3
   .repeat .strlen(SERVER_HOSTNAME),I
     lda #.strat(SERVER_HOSTNAME,I)
-    sta MAP_ESP_DATA
+    sta RNBW::BUF_OUT+4+I
   .endrepeat
 
 .else
@@ -46,23 +42,31 @@
   lda #3
   clc
   adc hostnameLength
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+0
  
   lda #RNBW::TO_ESP::SERVER_SET_SETTINGS
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+1
   lda port+0
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+2
   lda port+1
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+3
   ldx #0
 :
   lda hostname,x
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+4,x
   inx
   cpx hostnameLength
   bne :-
 
 .endif
+
+  ; send message
+  sta RNBW::TX
+
+  ; wait for message to be sent
+:
+  bit RNBW::TX
+  bpl :-  
 
   ; connecting to server
   lda #<txtConnecting
@@ -75,9 +79,15 @@ connectToServer:
 
   ; send command
   lda #1
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_CONNECT
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+1
+  sta RNBW::TX
+
+  ; wait for message to be sent
+:
+  bit RNBW::TX
+  bpl :-
 
   ; let's ask for server status every 2 seconds
   ; if we're still not connected after 20 seconds
@@ -93,23 +103,25 @@ wait2seconds:
 
   ; check server status
   lda #1
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_GET_STATUS
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+1
+  sta RNBW::TX
 
+  ; wait for message to be sent
+:
+  bit RNBW::TX
+  bpl :-
+  
   ; wait for answer
 :
-  bit MAP_ESP_CONFIG
+  bit RNBW::RX
   bpl :-
 
   ; get data
-  lda MAP_ESP_DATA ; dummy read
-  nop
-  lda MAP_ESP_DATA ; length (don't care)
-  nop
-  lda MAP_ESP_DATA ; command (don't care)
-  nop
-  lda MAP_ESP_DATA ; server status
+  ; ignore message length and opcode/command
+  lda RNBW::BUF_IN+2 ; server status
+  sta RNBW::RX  ; acknowledge answer
   cmp #RNBW::SERVER_STATUS::CONNECTED
   beq connected
 
@@ -123,17 +135,22 @@ connected:
   lda #2
   clc
   adc usernameLength
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_SEND_MESSAGE
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+1
   ldx #0
-  stx MAP_ESP_DATA
+  stx RNBW::BUF_OUT+2
 :
   lda username,x
-  sta MAP_ESP_DATA
+  sta RNBW::BUF_OUT+3,x
   inx
   cpx usernameLength
   bne :-
+  sta RNBW::TX
+  ; wait for message to be sent
+:
+  bit RNBW::TX
+  bpl :-
 
 /*
   ; connected to server

@@ -15,9 +15,9 @@
 
   enableIRQ           = RNBW_enableIRQ
   disableIRQ          = RNBW_disableIRQ
-  getData             = RNBW_getData
   sendData            = RNBW_sendData
   waitReady           = RNBW_waitReady
+  copyRXtoTX          = RNBW_copyRXtoTX
   debugA              = RNBW_debug_A
   debug_A             = RNBW_debug_A
   debugX              = RNBW_debug_X
@@ -27,38 +27,37 @@
   getRandomByte       = RNBW_getRandomByte
   getRandomByteRange  = RNBW_getRandomByteRange
   getRandomWord       = RNBW_getRandomWord
-  getRandomWordRange  = RNBW_getRandomWordRange
 
 ; ################################################################################
 ; ZEROPAGE
 
-.pushseg
-.zeropage
+  .pushseg
+  .zeropage
 
-rnbwTmp:  .res 2
+  rnbwTmp:  .res 2
 
-.popseg
+  .popseg
 
 ; ################################################################################
 ; MACROS
 
-.if .not .definedmacro(RNBW_waitResponse)
-  .macro RNBW_waitResponse
-    ; wait for response
-  :
-    bit $4101
-    bpl :-
-  .endmacro
-.endif
+  .if .not .definedmacro(RNBW_waitRX)
+    .macro RNBW_waitRX
+      ; wait for message to be received
+    :
+      bit RX
+      bpl :-
+    .endmacro
+  .endif
 
-.if .not .definedmacro(RNBW_waitAnswer)
-  .macro RNBW_waitAnswer
-    ; wait for response
-  :
-    bit $4101
-    bpl :-
-  .endmacro
-.endif
+  .if .not .definedmacro(RNBW_waitTX)
+    .macro RNBW_waitTX
+      ; wait for message to be sent
+    :
+      bit TX
+      bpl :-
+    .endmacro
+  .endif
 
 ; ################################################################################
 ; CODE
@@ -66,9 +65,9 @@ rnbwTmp:  .res 2
   .proc RNBW_disableIRQ
 
     ; disable ESP IRQ
-    lda $4101
-    and #$3f
-    sta $4101
+    lda CONFIG
+    and #$fd
+    sta CONFIG
 
     ; return
     rts
@@ -77,10 +76,10 @@ rnbwTmp:  .res 2
 
   .proc RNBW_enableIRQ
 
-    ; disable ESP IRQ
-    lda $4101
-    ora #$40
-    sta $4101
+    ; enable ESP IRQ
+    lda CONFIG
+    ora #$02
+    sta CONFIG
 
     ; return
     rts
@@ -100,64 +99,57 @@ rnbwTmp:  .res 2
     inx
   :
     lda (rnbwTmp),y
-    sta $4100
+    sta BUF_OUT,y
     iny
     dex
     bne :-
+    sta TX
 
-    ; return
-    rts
-  .endproc
-
-  .proc RNBW_getData
-
-    lda $4100         ; dummy read
-    nop               ; seems to be needed when a long message is coming
-    ldx $4100         ; get bytes number
-    stx BUF_IN+0
-    ldy #1
   :
-    lda $4100
-    sta BUF_IN,Y
-    iny
-    dex
-    bne :-
+    bit TX
+    bpl :-
 
     ; return
     rts
-
   .endproc
 
   .proc RNBW_waitReady
 
     ; ask for ESP status
     lda #1
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::ESP_GET_STATUS
-    sta $4100
+    sta BUF_OUT+1
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
 
     ; wait for answer
   :
-    bit $4101
+    bit RX
     bpl :-
 
-    ; get data
-    jsr RNBW_getData
+    ; acknowledge answer
+    sta RX
 
-    ; make sure that the data ready flag is cleared
+    ; return
+    rts
+
+  .endproc
+
+  .proc RNBW_copyRXtoTX
+
+    ; copy RX buffer to TX buffer
+    ldx BUF_IN+0
+    stx BUF_OUT+0
   :
-    bit $4101
-    bmi :-
-
-/*
-    lda BUF_IN+1
-    cmp #FROM_ESP::READY
-    beq done
-
-    lda $4101
-
-  done:
-*/
+    lda BUF_IN,x
+    sta BUF_OUT,x
+    dex
+    bne :-
 
     ; return
     rts
@@ -169,11 +161,17 @@ rnbwTmp:  .res 2
     ; data to debug in A
     pha
     lda #2
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::DEBUG_LOG
-    sta $4100
+    sta BUF_OUT+1
     pla
-    sta $4100 ; DATA
+    sta BUF_OUT+2
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
 
     ; return
     rts
@@ -184,10 +182,16 @@ rnbwTmp:  .res 2
 
     ; data to debug in X
     lda #2
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::DEBUG_LOG
-    sta $4100
-    stx $4100 ; DATA
+    sta BUF_OUT+1
+    stx BUF_OUT+2
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
 
     ; return
     rts
@@ -198,58 +202,76 @@ rnbwTmp:  .res 2
   
     ; data to debug in Y
     lda #2
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::DEBUG_LOG
-    sta $4100
-    sty $4100 ; DATA
+    sta BUF_OUT+1
+    sty BUF_OUT+2
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
 
     ; return
     rts
 
   .endproc
 
-  .proc RNBW_getWifiStatusSync
+  .proc RNBW_getWifiStatus
 
     ; ask for wifi status
     lda #1
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::WIFI_GET_STATUS
-    sta $4100
+    sta BUF_OUT+1
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
 
     ; wait for answer
   :
-    bit $4101
+    bit RX
     bpl :-
-
-    ; get data
-    jsr RNBW_getData
 
     ; return wifi status in A
     lda BUF_IN+2
 
+    ; acknowledge answer
+    sta RX
+
     ; return
     rts
 
   .endproc
 
-  .proc RNBW_getServerStatusSync
+  .proc RNBW_getServerStatus
 
     ; ask for server status
     lda #1
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::SERVER_GET_STATUS
-    sta $4100
+    sta BUF_OUT+1
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
 
     ; wait for answer
   :
-    bit $4101
+    bit RX
     bpl :-
-
-    ; get data
-    jsr RNBW_getData
 
     ; return server status in A
     lda BUF_IN+2
+
+    ; acknowledge answer
+    sta RX
 
     ; return
     rts
@@ -259,11 +281,29 @@ rnbwTmp:  .res 2
   .proc RNBW_getRandomByte
 
     lda #1
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::RND_GET_BYTE
-    sta $4100
-    RNBW_waitResponse
-    jmp RNBW_getData
+    sta BUF_OUT+1
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
+
+    ; wait for answer
+  :
+    bit RX
+    bpl :-
+
+    ; return random byte in A
+    lda BUF_IN+2
+
+    ; acknowledge answer
+    sta RX
+
+    ; return
+    rts
 
   .endproc
 
@@ -272,39 +312,61 @@ rnbwTmp:  .res 2
     ; Y: max
 
     lda #3
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::RND_GET_BYTE_RANGE
-    sta $4100
-    stx $4100
-    sty $4100
-    RNBW_waitResponse
-    jmp RNBW_getData
+    sta BUF_OUT+1
+    stx BUF_OUT+2
+    sty BUF_OUT+3
+    sta TX    
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
+
+    ; wait for answer
+  :
+    bit RX
+    bpl :-
+
+    ; return random byte in A
+    lda BUF_IN+2
+
+    ; acknowledge answer
+    sta RX
+
+    ; return
+    rts
 
   .endproc
 
   .proc RNBW_getRandomWord
 
     lda #1
-    sta $4100
+    sta BUF_OUT+0
     lda #TO_ESP::RND_GET_WORD
-    sta $4100
-    RNBW_waitResponse
-    jmp RNBW_getData
+    sta BUF_OUT+1
+    sta TX    
 
-  .endproc
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
 
-  .proc RNBW_getRandomWordRange
-    ; X: min
-    ; Y: max
+    ; wait for answer
+  :
+    bit RX
+    bpl :-
 
-    lda #3
-    sta $4100
-    lda #TO_ESP::RND_GET_WORD_RANGE
-    sta $4100
-    stx $4100
-    sty $4100
-    RNBW_waitResponse
-    jmp RNBW_getData
+    ; return random word in A (hi) and X (lo)
+    lda BUF_IN+2
+    ldx BUF_IN+3
+
+    ; acknowledge answer
+    sta RX
+
+    ; return
+    rts
 
   .endproc
 

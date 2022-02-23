@@ -1,6 +1,12 @@
-/bin/*.exe
-/roms/bak/*
-/server/node_modules
-obj/
 
-roms/
+#asm6
+/asm6/bin
+/asm6/*.exe
+
+#cc65
+/cc65/bin/*.exe
+/cc65/roms/bak/*
+/cc65/obj/
+
+# server
+/server/node_modules

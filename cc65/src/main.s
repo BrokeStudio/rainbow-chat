@@ -1,11 +1,7 @@
 ; ascii art font generator : http://patorjk.com/software/taag/#p=display&f=Small
 .include "version.s"
-.out "#   ___      _      _                 _____ _         _     "
-.out "#  | _ \__ _(_)_ _ | |__  _____ __ __/ / __| |_  __ _| |_   "
-.out "#  |   / _` | | ' \| '_ \/ _ \ V  V / / (__| ' \/ _` |  _|  "
-.out "#  |_|_\__,_|_|_||_|_.__/\___/\_/\_/_/ \___|_||_\__,_|\__|  "
-.out "#"
 .out "# Rainbow chat example..."
+.out .sprintf( "# version %s", STR_VERSION )
 .out .sprintf( "# build %s", STR_BUILD )
 .out "#"
 .feature c_comments
@@ -15,29 +11,9 @@
 ; ################################################################################
 ; HEADER
 .segment "HEADER"
-.import NES_MAPPER
-.import NES_PRG_BANKS,NES_CHR_BANKS,NES_MIRRORING
-/*
-; NES 2.0 format
-.byte $4E,$45,$53,$1A   ; 'NES' + $1A
-.byte <NES_PRG_BANKS
-.if CHR_CHIPS = RNBW_CHR_RAM
-  .byte 0
-.else
-  .byte <NES_CHR_BANKS
-.endif
-.byte <(NES_MIRRORING|(NES_MAPPER&$0F)<<4) ; |%00000010 ; let's disable battery save for now
-.byte <((NES_MAPPER&$F0)|%00001000) ; upper nybble of mapper number + iNES 2.0
-.byte <((NES_MAPPER&$F00)>>8)
-.byte $00
-.byte 9 ; PRG-RAM shift counter - (64 << shift counter)
-.if CHR_CHIPS <> RNBW_CHR_ROM
-  .byte 9 ; CHR-RAM shift counter - (64 << shift counter)
-.else
-  .byte 0
-.endif
-.byte $00, $00, $00, $00 ; padding
-*/
+.import NES_MAPPER,NES_PRG_BANKS,NES_CHR_BANKS,NES_MIRRORING
+
+
 ; NES 2.0 format
 .byte "NES", $1A      ; flags 0-3: ines magic
 .byte <NES_PRG_BANKS  ; flag 4
@@ -103,7 +79,7 @@ zp31:               .res 1
 .include "nes-lib/nes-lib.s"
 
 ; RAINBOW
-; documentation: https://hackmd.io/VBjyP93xS5aYKYTtlfgU7A
+; documentation: https://github.com/BrokeStudio/rainbow-lib
 .segment "CODE"
 .include "rainbow-lib/rainbow.s"
 
@@ -190,7 +166,13 @@ apu_clear_loop:
 
   ; disable ESP for now
   lda #0
-  sta MAP_ESP_CONFIG
+  sta MAP_RNBW_CONFIG
+
+  ; init Rainbow RX/TX RAM addresses
+  lda #>RNBW::BUF_IN
+  sta RNBW::RX_ADD
+  lda #>RNBW::BUF_OUT
+  sta RNBW::TX_ADD
 
   ; mapper init
   lda #%00011100
@@ -350,10 +332,13 @@ asciiCHR:
 ; CREDITS
 
 credits:
-  .byte "/Rainbow Chat example b"
+  .byte "/Rainbow Chat example v"
+  version:
+  .byte STR_VERSION
+  .byte "b"
   build:
   .byte STR_BUILD
-  .byte "/2020 Broke Studio"
+  .byte "/2020-2022 Broke Studio"
   .byte "/code Antoine Gohin"
   .byte "/thx Ludy<3/"
 

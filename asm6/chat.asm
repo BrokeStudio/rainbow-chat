@@ -1,69 +1,66 @@
 ; ################################################################################
 ; CONSTANTS
 
-; uncomment BOTH lines to hardcode server hostname and port
-.define SERVER_HOSTNAME "127.0.0.1"
-SERVER_PORT = 8000
+; uncomment this line to use hardcoded server hostname and port
+; see chatConnect in chat-connections.asm file
+localhost EQU 1
 
 ; ################################################################################
 ; ZEROPAGE + MISC
 
-.pushseg
-.zeropage
+.enum $0050
 
-cursorPos:      .res 1  ; cursor position / index
-cursorHoldCnt:  .res 1  ; cursor hold counter
-textCursorPos:  .res 1  ; text cursor postion / index
-separatorPos:   .res 1  ; separator position between username and actual message
-usernameLength: .res 1  ; username length
-messageLength:  .res 1  ; message length
-messageEnd:     .res 1  ; message end index
-NTaddress:      .res 2  ; NT VRAM address to update
-chatState:      .res 1  ; chat state (HOSTNAME | PORT | USERNAME | CHAT)
+cursorPos      .dsb 1  ; cursor position / index
+cursorHoldCnt  .dsb 1  ; cursor hold counter
+textCursorPos  .dsb 1  ; text cursor postion / index
+separatorPos   .dsb 1  ; separator position between username and actual message
+usernameLength .dsb 1  ; username length
+messageLength  .dsb 1  ; message length
+messageEnd     .dsb 1  ; message end index
+NTaddress      .dsb 2  ; NT VRAM address to update
+chatState      .dsb 1  ; chat state (HOSTNAME | PORT | USERNAME | CHAT)
 
 ; chat-settings
-username:       .res 8  ; username string, max  8 characters
-hostname:       .res 32 ; hostname string, max 32 characters
-hostnameLength: .res 1  ; hostname length
-port:           .res 2  ; port (converted from string to 16bit hex)
+username       .dsb 8  ; username string, max  8 characters
+hostname       .dsb 32 ; hostname string, max 32 characters
+hostnameLength .dsb 1  ; hostname length
+port           .dsb 2  ; port (converted from string to 16bit hex)
 
-CURSOR_TILE         = $1e
-CURSOR_MAX_POS      = 90
-CURSOR_HOLD_DELAY   = 30
-TEXT_MAX_LENGTH     = 28
+.ende
 
-.enum CHAT_STATES
-  HOSTNAME
-  PORT
-  USERNAME
-  CHAT
-.endenum
+CURSOR_TILE         EQU $1e
+CURSOR_MAX_POS      EQU 90
+CURSOR_HOLD_DELAY   EQU 30
+TEXT_MAX_LENGTH     EQU 28
 
-.popseg
+CHAT_STATES_HOSTNAME  EQU 0
+CHAT_STATES_PORT      EQU 1
+CHAT_STATES_USERNAME  EQU 2
+CHAT_STATES_CHAT      EQU 3
 
 ; ################################################################################
 ; INCLUDES
 
-.include "chat-settings.s"
-.include "chat-connection.s"
-.include "chat-message-handler.s"
+.include "chat-settings.asm"
+.include "chat-connection.asm"
+.include "chat-message-handler.asm"
 
 ; ################################################################################
 ; CODE
 
-.proc startChat
+startChat:
 
   jsr chatInitView
-.ifdef SERVER_PORT
+.ifdef localhost
   jsr setUsernameInit
 .else
   jsr setHostnameInit
 .endif
   jmp chatLoop
 
-.endproc
 
-.proc chatInitView
+
+chatInitView:
 
   ; cursor tile
   lda #CURSOR_TILE
@@ -90,17 +87,17 @@ TEXT_MAX_LENGTH     = 28
   ; load NT data
   ldx #>chatNT
   lda #<chatNT
-  jsr PPU::vram_unrle
+  jsr vram_unrle
 
-  ; disable rendering
-  jsr PPU::on
+  ; enable rendering
+  jsr ppu_on_all
 
   ; return
   rts
 
-.endproc
 
-.proc chatInit
+
+chatInit:
 
   ; init vars
   lda #0
@@ -126,78 +123,78 @@ TEXT_MAX_LENGTH     = 28
 
   ; init Rainbow output buffer
   ; message format is:
-  ; length | TO_ESP::SERVER_SEND_MESSAGE | 0x01 (new msg opcode) | message / string ...
+  ; length | TOESP_SERVER_SEND_MSG | 0x01 (new msg opcode) | message / string ...
   ;lda #2
-  ;sta RNBW::BUF_OUT+0    ; no need to set the length yet
-  lda #RNBW::TO_ESP::SERVER_SEND_MESSAGE
-  sta RNBW::BUF_OUT+1
+  ;sta RNBW_BUF_OUT+0    ; no need to set the length yet
+  lda #TOESP_SERVER_SEND_MSG
+  sta RNBW_BUF_OUT+1
   lda #1
-  sta RNBW::BUF_OUT+2
+  sta RNBW_BUF_OUT+2
 
   ; update chat state
-  lda #CHAT_STATES::CHAT
+  lda #CHAT_STATES_CHAT
   sta chatState
 
   ; return
   rts
 
-.endproc
 
-.proc chatLoop
+
+chatLoop:
 
   ; check for incomming data from ESP
-  bit MAP_ESP_CONFIG
-  bpl :+
+  bit RNBW_RX
+  bpl +
     jsr processData
-:
++
 
   ; poll controller
   ldy #0
-  jsr pad::read
+  jsr padRead
 
   ; handle long press on LEFT / RIGHT / A
 
-  lda pad::state
+  lda padState
   and #PAD_LEFT
   beq skipLEFTstate
     lda cursorHoldCnt
     cmp #CURSOR_HOLD_DELAY
-    bne :+
+    bne +
       dec cursorHoldCnt
       jmp decCursor
-  :
+  +
     inc cursorHoldCnt
     jmp skipRIGHTstate
 skipLEFTstate:
 
-  lda pad::state
+  lda padState
   and #PAD_RIGHT
   beq skipRIGHTstate
     lda cursorHoldCnt
     cmp #CURSOR_HOLD_DELAY
-    bne :+
+    bne +
       dec cursorHoldCnt
       jmp incCursor
-  :
+  +
     inc cursorHoldCnt
     jmp skipRIGHTstate
 skipRIGHTstate:
 
-  lda pad::state
+  lda padState
   and #PAD_A
   beq skipAstate
     lda cursorHoldCnt
     cmp #CURSOR_HOLD_DELAY
-    bne :+
+    bne +
       dec cursorHoldCnt
       jmp removeChar
-  :
+  +
     inc cursorHoldCnt
 skipAstate:
 
   ; handle long press release for RIGHT / LEFT / A
 
-  lda pad::released
+  lda padReleased
   and #PAD_RIGHT|PAD_LEFT|PAD_A
   beq skipLEFT_RIGHT_Areleased
     lda #0
@@ -206,7 +203,7 @@ skipLEFT_RIGHT_Areleased:
 
   ; handle pressed button
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_LEFT
   beq skipLEFTpressed
 decCursor:
@@ -216,7 +213,7 @@ decCursor:
     dec cursorPos
 skipLEFTpressed:
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_RIGHT
   beq skipRIGHTpressed
 incCursor:
@@ -227,7 +224,7 @@ incCursor:
     inc cursorPos
 skipRIGHTpressed:
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_UP
   beq skipUPpressed
     ; move cursor position to previous line if possible
@@ -238,7 +235,7 @@ skipRIGHTpressed:
     sta cursorPos
 skipUPpressed:
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_DOWN
   beq skipDOWNpressed
     ; move cursor position to next line if possible
@@ -250,7 +247,7 @@ skipUPpressed:
     sta cursorPos
 skipDOWNpressed:
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_A
   beq skipApressed
 removeChar:
@@ -258,7 +255,7 @@ removeChar:
     jsr removeCharacter
 skipApressed:
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_B
   beq skipBpressed
     ; add a new character to text input
@@ -268,7 +265,7 @@ skipApressed:
     jsr addCharacter
 skipBpressed:
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_SELECT
   beq skipSELECTpressed
     ; add SPACE to text input
@@ -276,26 +273,26 @@ skipBpressed:
     jsr addCharacter
 skipSELECTpressed:
 
-  lda pad::pressed
+  lda padPressed
   and #PAD_START
   beq skipSTARTpressed
     ; branch on chat state
     lda chatState
-    cmp #CHAT_STATES::HOSTNAME
-    bne :+
+    cmp #CHAT_STATES_HOSTNAME
+    bne +
       jsr setHostname
       jmp skipSTARTpressed
-  :
-    cmp #CHAT_STATES::PORT
-    bne :+
+  +
+    cmp #CHAT_STATES_PORT
+    bne +
       jsr setPort
       jmp skipSTARTpressed
-  :
-    cmp #CHAT_STATES::USERNAME
-    bne :+
+  +
+    cmp #CHAT_STATES_USERNAME
+    bne +
       jsr setUsername
       jmp skipSTARTpressed
-  :
+  +
     ; send message
     jsr sendMessage
 skipSTARTpressed:
@@ -304,14 +301,14 @@ skipSTARTpressed:
   jsr updateCursor
 
   ; wait for NMI
-  jsr PPU::waitNMI
+  jsr waitNMI
 
   ; and loop...
   jmp chatLoop
 
-.endproc
 
-.proc updateCursor
+
+updateCursor:
 
   ldx cursorPos
   lda cursorPosX,x
@@ -322,14 +319,14 @@ skipSTARTpressed:
   ; return
   rts
 
-.endproc
 
-.proc addCharacter
+
+addCharacter:
 
   ; Rainbow output buffer with new character
   sta $102
   ldx textCursorPos
-  sta RNBW::BUF_OUT+3,x
+  sta RNBW_BUF_OUT+3,x
   
   ; update NT VRAM address
   lda NTaddressHI,x
@@ -340,39 +337,39 @@ skipSTARTpressed:
   ; are we at the limit ?
   lda textCursorPos
   cmp #TEXT_MAX_LENGTH
-  bne :+
+  bne +
     ; return
     rts
-:
++
 
   ; update VRAM
   lda #<$100
   ldx #>$100
-  jsr PPU::set_vram_update
-  jsr PPU::waitNMI
+  jsr set_vram_update
+  jsr waitNMI
 
   ; increment text index pos
   inc textCursorPos
 
   ; return
   rts
-.endproc
 
-.proc removeCharacter
+
+removeCharacter:
 
   ; are we at the begining of the line ?
   lda textCursorPos
-  bne :+
+  bne +
     ; return
     rts
-:
++
 
   ; update NT and Rainbow output buffer with new character
   lda #$20
   sta $102
 
   ldx textCursorPos
-  sta RNBW::BUF_OUT+3,x
+  sta RNBW_BUF_OUT+3,x
 
   ; decrement text index pos
   dec textCursorPos
@@ -387,38 +384,38 @@ skipSTARTpressed:
   ; set VRAM update pointer
   lda #<$100
   ldx #>$100
-  jsr PPU::set_vram_update
-  jsr PPU::waitNMI
+  jsr set_vram_update
+  jsr waitNMI
 
   ; return
   rts
 
-.endproc
 
-.proc sendMessage
+
+sendMessage:
 
   ; are we at the begining of the line ?
   lda textCursorPos
-  bne :+
+  bne +
     ; return
     rts
-:
++
 
   ; update message length
   lda #2
   clc
   adc textCursorPos
-  sta RNBW::BUF_OUT+0
+  sta RNBW_BUF_OUT+0
 
   ; send data using the Rainbow output buffer
-  lda #<RNBW::BUF_OUT
-  ldx #>RNBW::BUF_OUT
-  jsr RNBW::sendData
+  lda #<RNBW_BUF_OUT
+  ldx #>RNBW_BUF_OUT
+  jsr RNBW_sendData
 
   ; clear text input
   lda #<txtBlank
   ldx #>txtBlank
-  jsr PPU::set_vram_update
+  jsr set_vram_update
 
   ; reset text cursor
   lda #0
@@ -431,45 +428,43 @@ skipSTARTpressed:
   ; return
   rts
 
-.endproc
 
-.proc processData
 
-  ; get new data
-  ; data will be available in the Rainbow input buffer (RNBW::BUF_IN)
-  jsr RNBW::getData
+processData:
+  ; data available in RAM buffer (RNBW_BUF_IN)
 
   ; is it a message from server ?
-  lda RNBW::BUF_IN+1
-  cmp #RNBW::FROM_ESP::MESSAGE_FROM_SERVER
-  beq :+
+  lda RNBW_BUF_IN+1
+  cmp #FROMESP_MESSAGE_FROM_SERVER
+  beq +
     ; if not, ignore the message for now...
-
     ; TODO...
+
+    sta RNBW_RX  ; acknowledge received message
 
     ; return
     rts
-:
++
 
   ; branch on server opcode
-  lda RNBW::BUF_IN+2
+  lda RNBW_BUF_IN+2
   cmp #0
-  bne :+
+  bne +
     jmp newUser
-:
++
   cmp #1
-  bne :+
+  bne +
     jmp newMessage
-:
-
++
   ; unknown opcode, don't do anything...
-
   ; TODO...
+
+  sta RNBW_RX  ; acknowledge received message
 
   ; return
   rts
 
-.endproc
+
 
 ; ################################################################################
 ; DATA
@@ -478,38 +473,45 @@ chatNT:
   .incbin "gfx/chat.rle"
 
 chatPAL:
-  .byte $0c,$00,$10,$30,$0c,$00,$10,$0c,$0c,$17,$27,$37,$0c,$00,$19,$29
-  .byte $0c,$00,$10,$30,$0c,$00,$10,$0c,$0c,$17,$27,$37,$0c,$00,$19,$29
+  .db $0c,$00,$10,$30,$0c,$00,$10,$0c,$0c,$17,$27,$37,$0c,$00,$19,$29
+  .db $0c,$00,$10,$30,$0c,$00,$10,$0c,$0c,$17,$27,$37,$0c,$00,$19,$29
 
 cursorPosX:
-  .repeat 3
-    .repeat 30,I
-      .byte 8*(I+1)
-    .endrepeat
-  .endrepeat
+  I=0
+  .rept 3
+    .rept 30
+      .db 8*(I+1)
+      I=I+1
+    .endr
+    I=0
+  .endr
 
 cursorPosY:
-  .repeat 30
-    .byte 184
-  .endrepeat
-  .repeat 30
-    .byte 200
-  .endrepeat
-  .repeat 30
-    .byte 216
-  .endrepeat
+  .rept 30
+    .db 184
+  .endr
+  .rept 30
+    .db 200
+  .endr
+  .rept 30
+    .db 216
+  .endr
 
 txtBlank:
-  .byte $22|NT_UPD_HORZ,$62,28
-  .byte "                            "
-  .byte NT_UPD_EOF
+  .db $22|NT_UPD_HORZ,$62,28
+  .db "                            "
+  .db NT_UPD_EOF
 
 NTaddressHI:
-.repeat TEXT_MAX_LENGTH,I
-  .byte >($2262+I)
-.endrepeat
+I=0
+.rept TEXT_MAX_LENGTH
+  .db >($2262+I)
+  I=I+1
+.endr
 
 NTaddressLO:
-.repeat TEXT_MAX_LENGTH,I
-  .byte <($2262+I)
-.endrepeat
+I=0
+.rept TEXT_MAX_LENGTH
+  .db <($2262+I)
+  I=I+1
+.endr
