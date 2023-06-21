@@ -1,101 +1,172 @@
 ; ################################################################################
 ; MAPPER REGISTERS
 
-; ESP / WiFi
-MAP_RNBW_CONFIG     = $4100
-MAP_RNBW_RX         = $4101
-MAP_RNBW_TX         = $4102
-MAP_RNBW_RX_HI_ADD  = $4103
-MAP_RNBW_RX_LO_ADD  = $4104
-MAP_RNBW_TX_HI_ADD  = $4105
-MAP_RNBW_TX_LO_ADD  = $4106
-
 ; Mapper configuration
-MAP_CONFIG      = $4110
-MAP_VERSION     = $4113
+MAP_PRG_CONTROL     = $4100
 
 ; PRG banking
-MAP_PRG_8       = $4120
-MAP_PRG_A       = $4121
-MAP_PRG_C       = $4122
-MAP_PRG_5       = $4123
-MAP_PRG_6       = $4124
+MAP_PRG_6_HI        = $4106
+MAP_PRG_7_HI        = $4107
+MAP_PRG_8_HI        = $4108
+MAP_PRG_9_HI        = $4109
+MAP_PRG_A_HI        = $410A
+MAP_PRG_B_HI        = $410B
+MAP_PRG_C_HI        = $410C
+MAP_PRG_D_HI        = $410D
+MAP_PRG_E_HI        = $410E
+MAP_PRG_F_HI        = $410F
+
+MAP_PRG_5_LO        = $4115
+MAP_PRG_6_LO        = $4116
+MAP_PRG_7_LO        = $4117
+MAP_PRG_8_LO        = $4118
+MAP_PRG_9_LO        = $4119
+MAP_PRG_A_LO        = $411A
+MAP_PRG_B_LO        = $411B
+MAP_PRG_C_LO        = $411C
+MAP_PRG_D_LO        = $411D
+MAP_PRG_E_LO        = $411E
+MAP_PRG_F_LO        = $411F
 
 ; CHR banking
-MAP_CHR_0       = $4130
-MAP_CHR_1       = $4131
-MAP_CHR_2       = $4132
-MAP_CHR_3       = $4133
-MAP_CHR_4       = $4134
-MAP_CHR_5       = $4135
-MAP_CHR_6       = $4136
-MAP_CHR_7       = $4137
+MAP_CHR_CONTROL     = $4120
+MAP_BG_EXT_BANK     = $4121
 
-MAP_CHR_UPPER_BIT = $4138
+MAP_NT_A_BANK       = $4126
+MAP_NT_B_BANK       = $4127
+MAP_NT_C_BANK       = $4128
+MAP_NT_D_BANK       = $4129
 
-; IRQ
-MAP_IRQ_LATCH   = $4140
-MAP_IRQ_RELOAD  = $4141
-MAP_IRQ_DISABLE = $4142
-MAP_IRQ_ENABLE  = $4143
+MAP_NT_A_CONTROL    = $412A
+MAP_NT_B_CONTROL    = $412B
+MAP_NT_C_CONTROL    = $412C
+MAP_NT_D_CONTROL    = $412D
+
+MAP_CHR_0_HI        = $4130
+MAP_CHR_1_HI        = $4131
+MAP_CHR_2_HI        = $4132
+MAP_CHR_3_HI        = $4133
+MAP_CHR_4_HI        = $4134
+MAP_CHR_5_HI        = $4135
+MAP_CHR_6_HI        = $4136
+MAP_CHR_7_HI        = $4137
+MAP_CHR_8_HI        = $4138
+MAP_CHR_9_HI        = $4139
+MAP_CHR_A_HI        = $413A
+MAP_CHR_B_HI        = $413B
+MAP_CHR_C_HI        = $413C
+MAP_CHR_D_HI        = $413D
+MAP_CHR_E_HI        = $413E
+MAP_CHR_F_HI        = $413F
+
+MAP_CHR_0_LO        = $4140
+MAP_CHR_1_LO        = $4141
+MAP_CHR_2_LO        = $4142
+MAP_CHR_3_LO        = $4143
+MAP_CHR_4_LO        = $4144
+MAP_CHR_5_LO        = $4145
+MAP_CHR_6_LO        = $4146
+MAP_CHR_7_LO        = $4147
+MAP_CHR_8_LO        = $4148
+MAP_CHR_9_LO        = $4149
+MAP_CHR_A_LO        = $414A
+MAP_CHR_B_LO        = $414B
+MAP_CHR_C_LO        = $414C
+MAP_CHR_D_LO        = $414D
+MAP_CHR_E_LO        = $414E
+MAP_CHR_F_LO        = $414F
+
+; Scanline IRQ
+;MAP_PPU_IRQ_LATCH   = $4150
+;MAP_PPU_IRQ_CONTROL = $4151
+;MAP_PPU_IRQ_OFFSET  = $4152
+
+MAP_PPU_IRQ_LATCH   = $4150
+MAP_PPU_IRQ_ENABLE  = $4151
+MAP_PPU_IRQ_DISABLE = $4152
+MAP_PPU_IRQ_OFFSET  = $4153
+
+; CPU Cycle IRQ
+MAP_CPU_IRQ_LATCH_LO  = $4158
+MAP_CPU_IRQ_LATCH_HI  = $4159
+MAP_CPU_IRQ_CONTROL   = $415A
+MAP_CPU_IRQ_ACK       = $415B
+
+; Miscellaneaous
+MAP_VERSION         = $4160
+MAP_MUL_A           = $4161
+MAP_MUL_B           = $4162
+
+; ESP / WiFi
+MAP_RNBW_CONFIG     = $4170
+MAP_RNBW_RX         = $4171
+MAP_RNBW_TX         = $4172
+MAP_RNBW_RX_ADD     = $4173
+MAP_RNBW_TX_ADD     = $4174
 
 ; Audio expansion
-MAP_SND_P1_CTRL   = $4150
-MAP_SND_P1_LOW    = $4151
-MAP_SND_P1_HIGH   = $4152
-MAP_SND_P2_CTRL   = $4153
-MAP_SND_P2_LOW    = $4154
-MAP_SND_P2_HIGH   = $4155
-MAP_SND_SAW_ACC   = $4156
-MAP_SND_SAW_LOW   = $4157
-MAP_SND_SAW_HIGH  = $4158
-
-; Multiplier
-
-MAP_MUL_A = $4160
-MAP_MUL_B = $4161
+MAP_SND_P1_CTRL     = $41A0
+MAP_SND_P1_LOW      = $41A1
+MAP_SND_P1_HIGH     = $41A2
+MAP_SND_P2_CTRL     = $41A3
+MAP_SND_P2_LOW      = $41A4
+MAP_SND_P2_HIGH     = $41A5
+MAP_SND_SAW_ACC     = $41A6
+MAP_SND_SAW_LOW     = $41A7
+MAP_SND_SAW_HIGH    = $41A8
 
 ; ################################################################################
 ; MAPPER FLAGS / MASKS
 
 CHIP_MANUF_ID         = $BF
-CHIP_SIZE_128K        = $B5
-CHIP_SIZE_256K        = $B6
-CHIP_SIZE_512K        = $B7
+CHIP_SIZE_128K        = $D5
+CHIP_SIZE_256K        = $D6
+CHIP_SIZE_512K        = $D7
 
-PRG_MODE_16K_8K_8K    = %00000000 ; 16K + 8K + 8K fixed
-PRG_MODE_8K_8K_8K_8K  = %00000001 ; 8K + 8K + 8K fixed
-PRG_MODE_CLEAR        = %00000001^$ff
+PRG_ROM_MODE_0        = %00000000 ; 32K
+PRG_ROM_MODE_1        = %00000001 ; 16K + 16K
+PRG_ROM_MODE_2        = %00000010 ; 16K + 8K + 8K
+PRG_ROM_MODE_3        = %00000011 ; 8K + 8K + 8K + 8K
+PRG_ROM_MODE_4        = %00000100 ; 4K + 4K + 4K + 4K + 4K + 4K + 4K + 4K
+PRG_ROM_MODE_MASK     = %00000111
+PRG_ROM_MODE_CLEAR    = PRG_ROM_MODE_MASK^$ff
 
-CHR_MODE_1K           = %00000000 ; 1K mode
-CHR_MODE_2K           = %00000010 ; 2K mode
-CHR_MODE_4K           = %00000100 ; 4K mode
-CHR_MODE_8K           = %00000110 ; 8K mode
-CHR_MODE_MASK         = %00000110
-CHR_MODE_CLEAR        = CHR_MODE_MASK^$ff
+PRG_RAM_MODE_0        = %00000000 ; 8K
+PRG_RAM_MODE_1        = %10000000 ; 4K + 4K
+PRG_RAM_MODE_MASK     = %10000000
+PRG_RAM_MODE_CLEAR    = PRG_RAM_MODE_MASK^$ff
 
 CHR_CHIP_ROM          = %00000000 ; CHR-ROM
-CHR_CHIP_RAM          = %00001000 ; CHR-RAM
-CHR_CHIP_MASK         = %00001000
+CHR_CHIP_RAM          = %01000000 ; CHR-RAM
+CHR_CHIP_FPGA_RAM     = %10000000 ; FPGA-RAM
+CHR_CHIP_MASK         = %11000000
 CHR_CHIP_CLEAR        = CHR_CHIP_MASK^$ff
 
-MIRRORING_VERTICAL    = %00000000 ; VRAM
-MIRRORING_HORIZONTAL  = %00010000 ; VRAM
-MIRRORING_ONE_SCREEN  = %00100000 ; VRAM
-MIRRORING_FOUR_SCREEN = %00110000 ; VRAM + CHR-RAM
+SPR_EXT_MODE          = %00100000
 
-MIRRORING_MASK        = %00110000
-MIRRORING_CLEAR       = MIRRORING_MASK^$ff
+CHR_MODE_0            = %00000000 ; 8K mode
+CHR_MODE_1            = %00000001 ; 4K mode
+CHR_MODE_2            = %00000010 ; 2K mode
+CHR_MODE_3            = %00000011 ; 1K mode
+CHR_MODE_4            = %00000100 ; 512B mode
+CHR_MODE_MASK         = %00000111
+CHR_MODE_CLEAR        = CHR_MODE_MASK^$ff
 
-CHR_SCREEN_SELECT_MASK  = %11000000
-CHR_SCREEN_SELECT_CLEAR = CHR_SCREEN_SELECT_MASK^$ff
+CHR_FPGA_RAM_CONTROL  = %00000011
 
-CHR_1_SCREEN_1  = %00000000
-CHR_1_SCREEN_2  = %01000000
-CHR_1_SCREEN_3  = %10000000
-CHR_1_SCREEN_4  = %11000000
+NT_CIRAM              = %00000000 ;%00000000
+NT_CHR_RAM            = %01000000 ;%00000001
+NT_FPGA_RAM           = %10000000 ;%00000010
+NT_CHR_ROM            = %11000000 ;%00000011
 
-CHR_4_SCREEN_1  = %00000000
-CHR_4_SCREEN_2  = %01000000
-CHR_4_SCREEN_3  = %10000000
-CHR_4_SCREEN_4  = %11000000
+NT_EXT_BANK_0         = %00000000
+NT_EXT_BANK_1         = %00000100
+NT_EXT_BANK_2         = %00001000
+NT_EXT_BANK_3         = %00001100
+
+NT_NO_EXT             = %00000000
+NT_EXT_AT             = %00000001
+NT_EXT_BG             = %00000010
+NT_EXT_BG_AT          = %00000011
+
+NT_BANK_IDX           = %00111111

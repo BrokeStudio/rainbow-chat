@@ -27,6 +27,7 @@
   getRandomByte       = RNBW_getRandomByte
   getRandomByteRange  = RNBW_getRandomByteRange
   getRandomWord       = RNBW_getRandomWord
+  ;getRandomWordRange  = RNBW_getRandomWordRange
 
 ; ################################################################################
 ; ZEROPAGE
@@ -45,7 +46,7 @@
     .macro RNBW_waitRX
       ; wait for message to be received
     :
-      bit RX
+      bit ::RNBW::RX
       bpl :-
     .endmacro
   .endif
@@ -54,7 +55,7 @@
     .macro RNBW_waitTX
       ; wait for message to be sent
     :
-      bit TX
+      bit ::RNBW::TX
       bpl :-
     .endmacro
   .endif
@@ -157,7 +158,7 @@
   .endproc
 
   .proc RNBW_debug_A
-    
+
     ; data to debug in A
     pha
     lda #2
@@ -317,7 +318,7 @@
     sta BUF_OUT+1
     stx BUF_OUT+2
     sty BUF_OUT+3
-    sta TX    
+    sta TX
 
     ; wait for message to be sent
   :
@@ -346,7 +347,7 @@
     sta BUF_OUT+0
     lda #TO_ESP::RND_GET_WORD
     sta BUF_OUT+1
-    sta TX    
+    sta TX
 
     ; wait for message to be sent
   :
@@ -369,5 +370,33 @@
     rts
 
   .endproc
+/*
+  ; can't pass 4 arguments
+  .proc RNBW_getRandomWordRange
+    ; X: min
+    ; Y: max
+
+    lda #3
+    sta BUF_OUT+0
+    lda #TO_ESP::RND_GET_WORD_RANGE
+    sta BUF_OUT+1
+    stx BUF_OUT+2
+    sty BUF_OUT+3
+    sta TX
+
+    ; wait for message to be sent
+  :
+    bit TX
+    bpl :-
+
+    ; wait for answer
+  :
+    bit RX
+    bpl :-
+
+    ; return
+    rts
+  .endproc
+*/
 
 .endscope

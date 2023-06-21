@@ -1,12 +1,12 @@
 ; ################################################################################
 ; RAINBOW CONSTANTS
 
-; mapper registers
-CONFIG    = $4100
-RX        = $4101
-TX        = $4102
-RX_ADD    = $4103
-TX_ADD    = $4104
+; Rainbow mapper registers
+CONFIG    = $4170
+RX        = $4171
+TX        = $4172
+RX_ADD    = $4173
+TX_ADD    = $4174
 
 ; commands to ESP
 .enum TO_ESP
@@ -19,18 +19,19 @@ TX_ADD    = $4104
   BUFFER_CLEAR_RX_TX              ; Clear RX/TX buffers
   BUFFER_DROP_FROM_ESP            ; Drop messages from ESP buffer (TX)
   ESP_GET_FIRMWARE_VERSION        ; Get ESP/Rainbow firmware version
+  ESP_FACTORY_RESET               ; Reset ESP to factory settings
   ESP_RESTART                     ; Restart ESP
 
 ; WIFI CMDS
-  WIFI_GET_STATUS                 ; Get WiFi connection status
-  WIFI_GET_SSID                   ; Get WiFi network SSID
-  WIFI_GET_IP                     ; Get WiFi IP address
+  WIFI_GET_STATUS                 ; Get Wi-Fi connection status
+  WIFI_GET_SSID                   ; Get Wi-Fi network SSID
+  WIFI_GET_IP                     ; Get Wi-Fi IP address
+  WIFI_GET_CONFIG                 ; Get Wi-Fi station / Access Point / Web Server config
+  WIFI_SET_CONFIG                 ; Set Wi-Fi station / Access Point / Web Server config
 
 ; ACESS POINT CMDS
   AP_GET_SSID                     ; Get Access Point network SSID
   AP_GET_IP                       ; Get Access Point IP address
-  AP_GET_CONFIG                   ; Get Access Point config
-  AP_SET_CONFIG                   ; Set Access Point config
 
 ; RND CMDS
   RND_GET_BYTE                    ; Get random byte
@@ -43,8 +44,9 @@ TX_ADD    = $4104
   SERVER_PING                     ; Get ping between ESP and server
   SERVER_SET_PROTOCOL             ; Set protocol to be used to communicate (WS/UDP/TCP)
   SERVER_GET_SETTINGS             ; Get current server host name and port
-  SERVER_GET_CONFIG_SETTINGS      ; Get server host name and port defined in the Rainbow config file
   SERVER_SET_SETTINGS             ; Set current server host name and port
+  SERVER_GET_CONFIG_SETTINGS      ; Get server host name and port values saved in the Rainbow config file
+  SERVER_SET_CONFIG_SETTINGS      ; Set server host name and port values saved in the Rainbow config file
   SERVER_RESTORE_SETTINGS         ; Restore server host name and port to values defined in the Rainbow config
   SERVER_CONNECT                  ; Connect to server
   SERVER_DISCONNECT               ; Disconnect from server
@@ -57,6 +59,7 @@ TX_ADD    = $4104
   NETWORK_GET_REGISTERED_DETAILS  ; Get registered network SSID
   NETWORK_REGISTER                ; Register network
   NETWORK_UNREGISTER              ; Unregister network
+  NETWORK_SET_ACTIVE              ; Set active network
 
 ; FILE COMMANDS
   FILE_OPEN                       ; Open working file
@@ -71,6 +74,7 @@ TX_ADD    = $4104
   FILE_COUNT                      ; Count files in a specific path
   FILE_GET_LIST                   ; Get list of existing files in a path
   FILE_GET_FREE_ID                ; Get an unexisting file ID in a specific path
+  FILE_GET_FS_INFO                ; Get file system details (ESP flash or SD card)
   FILE_GET_INFO                   ; Get file info (size + crc32)
   FILE_DOWNLOAD                   ; Download a file
   FILE_FORMAT                     ; Format file system and save current config
@@ -82,60 +86,79 @@ TX_ADD    = $4104
 
 ; ESP CMDS
   READY                           ; ESP is ready
-  DEBUG_LEVEL                     ; Returns debug configuration
-  ESP_FIRMWARE_VERSION            ; Returns ESP/Rainbow firmware version
+  DEBUG_LEVEL                     ; Return debug configuration
+  ESP_FIRMWARE_VERSION            ; Return ESP/Rainbow firmware version
+  ESP_FACTORY_RESET               ; See ESP_FACTORY_RESET_RES enum for details on returned
 
-; WIFI / AP CMDS
-  WIFI_STATUS                     ; Returns WiFi connection status
-  SSID                            ; Returns WiFi / AP SSID
-  IP                              ; Returns WiFi / AP IP address
-  AP_CONFIG                       ; Returns AP config
+; WIFI / ACCESS POINT CMDS
+  WIFI_STATUS                     ; Return Wi-Fi connection status
+  SSID                            ; Return Wi-Fi / Access Point SSID
+  IP                              ; Return Wi-Fi / Access Point IP address
+  WIFI_CONFIG                     ; Return Wi-Fi station / Access Point / Web Server
 
 ; RND CMDS
-  RND_BYTE                        ; Returns random byte value
-  RND_WORD                        ; Returns random word value
+  RND_BYTE                        ; Return random byte value
+  RND_WORD                        ; Return random word value
 
 ; SERVER CMDS
-  SERVER_STATUS                   ; Returns server connection status
-  SERVER_PING                     ; Returns min, max and average round-trip time and number of lost packets
-  SERVER_SETTINGS                 ; Returns server settings (host name + port)
+  SERVER_STATUS                   ; Return server connection status
+  SERVER_PING                     ; Return min, max and average round-trip time and number of lost packets
+  SERVER_SETTINGS                 ; Return server settings (host name + port)
   MESSAGE_FROM_SERVER             ; Message from server
 
 ; NETWORK CMDS
-  NETWORK_COUNT                   ; Returns number of networks found
-  NETWORK_SCANNED_DETAILS         ; Returns details for a scanned network
-  NETWORK_REGISTERED_DETAILS      ; Returns SSID for a registered network
-  NETWORK_REGISTERED              ; Returns registered networks status
+  NETWORK_COUNT                   ; Return number of networks found
+  NETWORK_SCANNED_DETAILS         ; Return details for a scanned network
+  NETWORK_REGISTERED_DETAILS      ; Return SSID for a registered network
+  NETWORK_REGISTERED              ; Return registered networks status
 
 ; FILE CMDS
-  FILE_STATUS                     ; Returns working file status
-  FILE_EXISTS                     ; Returns if file exists or not
+  FILE_STATUS                     ; Return working file status
+  FILE_EXISTS                     ; Return if file exists or not
   FILE_DELETE                     ; See FILE_DELETE_RES enum for details on returned value
-  FILE_LIST                       ; Returns path file list (FILE_GET_LIST)
-  FILE_DATA                       ; Returns file data (FILE_READ)
-  FILE_COUNT                      ; Returns file count in a specific path
-  FILE_ID                         ; Returns a free file ID (FILE_GET_FREE_ID)
-  FILE_INFO                       ; Returns file info (size + CRC32) (FILE_GET_INFO)
+  FILE_LIST                       ; Return path file list (FILE_GET_LIST)
+  FILE_DATA                       ; Return file data (FILE_READ)
+  FILE_COUNT                      ; Return file count in a specific path
+  FILE_ID                         ; Return a free file ID (FILE_GET_FREE_ID)
+  FILE_FS_INFO                    ; Returns file system info (FILE_GET_FS_INFO)
+  FILE_INFO                       ; Return file info (size + CRC32) (FILE_GET_INFO)
   FILE_DOWNLOAD                   ; See FILE_DOWNLOAD_RES enum for details on returned value
 
 .endenum
 
-; WiFi status
+; ESP factory reset result codes
+.enum ESP_FACTORY_RESET_RES
+  SUCCESS
+  ERROR_WHILE_RESETTING_CONFIG
+  ERROR_WHILE_DELETING_TWEB
+  ERROR_WHILE_DELETING_WEB
+.endenum
+
+; Wi-Fi status
 .enum WIFI_STATUS
-  NO_SHIELD = 255
+  TIMEOUT = 255
   IDLE_STATUS = 0
   NO_SSID_AVAIL
   SCAN_COMPLETED
   CONNECTED
-  CONNECT_FAILED
+  CONNECTION_FAILED
   CONNECTION_LOST
+  WRONG_PASSWORD
   DISCONNECTED
+.endenum
+
+; Wi-Fi error
+.enum WIFI_ERROR
+  UNKNOWN = 255
+  NO_ERROR = 0
+  NO_SSID_AVAIL = 1
+  CONNECTION_FAILED = 4
+  CONNECTION_LOST = 5
+  WRONG_PASSWORD = 6
 .endenum
 
 ; Server protocols
 .enum SERVER_PROTOCOLS
-  WS
-  WS_S
   TCP
   TCP_S
   UDP
@@ -145,6 +168,13 @@ TX_ADD    = $4104
 .enum SERVER_STATUS
   DISCONNECTED
   CONNECTED
+.endenum
+
+; Wi-Fi config flags
+.enum WIFI_CONFIG_FLAGS
+  WIFI_STATION_ENABLE = 1
+  ACCESS_POINT_ENABLE = 2
+  WEB_SERVER_ENABLE = 4
 .endenum
 
 ; File paths
@@ -170,8 +200,11 @@ NUM_FILES = 64
 ; File config masks/flags
 .enum FILE_CONFIG_FLAGS
   ACCESS_MODE_MASK = %00000001
-  AUTO_ACCESS_MODE = 0
-  MANUAL_ACCESS_MODE = 1
+  ACCESS_MODE_AUTO = 0
+  ACCESS_MODE_MANUAL = 1
+  DESTINATION_MASK = %00000010
+  DESTINATION_ESP = 0
+  DESTINATION_SD = 2
 .endenum
 
 ; FILE_DELETE result codes
@@ -206,7 +239,3 @@ NUM_FILES = 64
   STREAM_WRITE = -10
   READ_TIMEOUT = -11
 .endenum
-
-; Rainbow registers
-RNBW_DATA = $5000
-RNBW_FLAGS = $5001

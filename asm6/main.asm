@@ -1,15 +1,11 @@
-; ascii art font generator : http://patorjk.com/software/taag/#p=display&f=Small
-.include "version.asm"
-
 ; ################################################################################
 ; HEADER
 
 .enum $0000
 
-NES_MAPPER    EQU 3872
-NES_PRG_BANKS EQU 32
+NES_MAPPER    EQU 682
+NES_PRG_BANKS EQU 64
 NES_CHR_BANKS EQU 0
-NES_MIRRORING EQU 0
 
 .ende
 
@@ -17,10 +13,10 @@ NES_MIRRORING EQU 0
 .db "NES", $1A      ; flags 0-3: ines magic
 .db <NES_PRG_BANKS  ; flag 4
 .db <NES_CHR_BANKS  ; flag 5
-.db <(NES_MIRRORING|(NES_MAPPER&$0F)<<4) ; flag 6
+.db <((NES_MAPPER&$0F)<<4) ; flag 6
 .db <((NES_MAPPER&$F0)|%00001000) ; flag 7: upper nybble of mapper number + iNES 2.0
 .db <((NES_MAPPER&$F00)>>8) ; flag 8
-.db 0 ; flag 9
+.byte ((>NES_CHR_BANKS)<<4)|>NES_PRG_BANKS
 .db 0 ; flag 10: PRG-RAM shift counter - (64 << shift counter)
 .db 9 ; flag 11: CHR-RAM shift counter - (64 << shift counter)
 .db $00   ; flag 12
@@ -67,27 +63,21 @@ NES_MIRRORING EQU 0
     zp30  .dsb 1
     zp31  .dsb 1
 
-	.ende
+  .ende
 
-; ################################################################################
-; PADDING
-
-  .rept 31
-	.base $8000
-	.org $c000
-  .endr
-
-  .base $c000
-	.org $e000
+  .base $8000
 
 ; ################################################################################
 ; INCLUDES
 
+; MAPPER REGISTERS
 .include "mapper-registers.asm"
+
+; BUILD VERSION
+.include "version.asm"
 
 ; NES LIB
 ; based on Shiru's code: https://shiru.untergrund.net/code.shtml
-.org $E000
 .include "nes-lib/nes-lib.asm"
 
 ; RAINBOW
@@ -183,13 +173,28 @@ apu_clear_loop:
   lda #>RNBW_BUF_OUT
   sta RNBW_TX_ADD
 
-  ; mapper init
-  lda #%00011100
-  sta MAP_CONFIG
+  ; clear prg banks upper bits
+  lda #0
+  sta MAP_PRG_6_HI
+  sta MAP_PRG_7_HI
+  sta MAP_PRG_9_HI
+  sta MAP_PRG_A_HI
+  sta MAP_PRG_B_HI
+  sta MAP_PRG_C_HI
+  sta MAP_PRG_D_HI
+  sta MAP_PRG_F_HI
+
+  ; set PRG configuration
+  lda #PRG_RAM_MODE_0|PRG_ROM_MODE_0
+  sta MAP_PRG_CONTROL
+
+  ; set CHR configuration
+  lda #CHR_CHIP_RAM|CHR_MODE_0
+  sta MAP_CHR_CONTROL
 
   ; select 8K CHR bank
   lda #0
-  sta MAP_CHR_0
+  sta MAP_CHR_0_LO
 
   ; set palette brightness
   lda #4
@@ -339,7 +344,7 @@ asciiCHR:
 
 ; ################################################################################
 ; CREDITS
-
+ 
 credits:
   .db "/Rainbow Chat example v"
   version:
@@ -347,7 +352,7 @@ credits:
   .db "b"
   build:
   .db STR_BUILD
-  .db "/2020-2022 Broke Studio"
+  .db "/2020-2023 Broke Studio"
   .db "/code Antoine Gohin"
   .db "/thx Ludy<3/"
 
@@ -359,3 +364,11 @@ credits:
   .word vector_nmi    ; $FFFA vblank nmi
   .word vector_reset  ; $FFFC reset
   .word vector_irq    ; $FFFE irq / brk
+
+; ################################################################################
+; PADDING
+
+  .rept 31
+	.base $8000
+	.pad $10000
+  .endr

@@ -1,9 +1,3 @@
-; ascii art font generator : http://patorjk.com/software/taag/#p=display&f=Small
-.include "version.s"
-.out "# Rainbow chat example..."
-.out .sprintf( "# version %s", STR_VERSION )
-.out .sprintf( "# build %s", STR_BUILD )
-.out "#"
 .feature c_comments
 .feature force_range
 .linecont +
@@ -11,17 +5,17 @@
 ; ################################################################################
 ; HEADER
 .segment "HEADER"
-.import NES_MAPPER,NES_PRG_BANKS,NES_CHR_BANKS,NES_MIRRORING
+.import NES_MAPPER,NES_PRG_BANKS,NES_CHR_BANKS
 
 
 ; NES 2.0 format
 .byte "NES", $1A      ; flags 0-3: ines magic
 .byte <NES_PRG_BANKS  ; flag 4
 .byte <NES_CHR_BANKS  ; flag 5
-.byte <(NES_MIRRORING|(NES_MAPPER&$0F)<<4) ; flag 6
+.byte <((NES_MAPPER&$0F)<<4) ; flag 6
 .byte <((NES_MAPPER&$F0)|%00001000) ; flag 7: upper nybble of mapper number + iNES 2.0
 .byte <((NES_MAPPER&$F00)>>8) ; flag 8
-.byte 0 ; flag 9
+.byte ((>NES_CHR_BANKS)<<4)|>NES_PRG_BANKS
 .byte 0 ; flag 10: PRG-RAM shift counter - (64 << shift counter)
 .byte 9 ; flag 11: CHR-RAM shift counter - (64 << shift counter)
 .byte $00   ; flag 12
@@ -71,7 +65,14 @@ zp31:               .res 1
 ; ################################################################################
 ; INCLUDES
 
+; MAPPER REGISTERS
 .include "mapper-registers.s"
+
+; BUILD VERSION
+.include "version.s"
+.out .sprintf( "# version %s", STR_VERSION )
+.out .sprintf( "# build %s", STR_BUILD )
+.out ""
 
 ; NES LIB
 ; based on Shiru's code: https://shiru.untergrund.net/code.shtml
@@ -174,13 +175,28 @@ apu_clear_loop:
   lda #>RNBW::BUF_OUT
   sta RNBW::TX_ADD
 
-  ; mapper init
-  lda #%00011100
-  sta MAP_CONFIG
+  ; clear prg banks upper bits
+  lda #0
+  sta MAP_PRG_6_HI
+  sta MAP_PRG_7_HI
+  sta MAP_PRG_9_HI
+  sta MAP_PRG_A_HI
+  sta MAP_PRG_B_HI
+  sta MAP_PRG_C_HI
+  sta MAP_PRG_D_HI
+  sta MAP_PRG_F_HI
+
+  ; set PRG configuration
+  lda #PRG_RAM_MODE_0|PRG_ROM_MODE_0
+  sta MAP_PRG_CONTROL
+
+  ; set CHR configuration
+  lda #CHR_CHIP_RAM|CHR_MODE_0
+  sta MAP_CHR_CONTROL
 
   ; select 8K CHR bank
   lda #0
-  sta MAP_CHR_0
+  sta MAP_CHR_0_LO
 
   ; set palette brightness
   lda #4
@@ -338,7 +354,7 @@ credits:
   .byte "b"
   build:
   .byte STR_BUILD
-  .byte "/2020-2022 Broke Studio"
+  .byte "/2020-2023 Broke Studio"
   .byte "/code Antoine Gohin"
   .byte "/thx Ludy<3/"
 

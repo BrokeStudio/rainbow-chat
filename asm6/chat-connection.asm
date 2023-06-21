@@ -12,7 +12,7 @@ chatConnect:
   sta RNBW_BUF_OUT+0
   lda #TOESP_SERVER_SET_PROTOCOL
   sta RNBW_BUF_OUT+1
-  lda #RNBW_PROTOCOL_WEBSOCKET
+  lda #RNBW_PROTOCOL_UDP
   sta RNBW_BUF_OUT+2
   sta RNBW_TX
 
@@ -24,9 +24,9 @@ chatConnect:
   ; set server host name and port
 .ifdef localhost
 
-  SERVER_PORT EQU 8000
+  SERVER_PORT EQU 1234
 
-  lda #3 + 9  ; 9 = length of 127.0.0.1
+  lda #4 + 9  ; 9 = length of 127.0.0.1
   sta RNBW_BUF_OUT+0
   lda #TOESP_SERVER_SET_SETTINGS
   sta RNBW_BUF_OUT+1
@@ -34,31 +34,33 @@ chatConnect:
   sta RNBW_BUF_OUT+2
   lda #<SERVER_PORT
   sta RNBW_BUF_OUT+3
+  lda #9
+  sta RNBW_BUF_OUT+4
 
   ; 127.0.0.1
   lda #'1'
-  sta RNBW_BUF_OUT+4
-  lda #'2'
   sta RNBW_BUF_OUT+5
-  lda #'7'
+  lda #'2'
   sta RNBW_BUF_OUT+6
-  lda #'.'
+  lda #'7'
   sta RNBW_BUF_OUT+7
-  lda #'0'
+  lda #'.'
   sta RNBW_BUF_OUT+8
-  lda #'.'
-  sta RNBW_BUF_OUT+9
   lda #'0'
-  sta RNBW_BUF_OUT+10
+  sta RNBW_BUF_OUT+9
   lda #'.'
+  sta RNBW_BUF_OUT+10
+  lda #'0'
   sta RNBW_BUF_OUT+11
-  lda #'1'
+  lda #'.'
   sta RNBW_BUF_OUT+12
+  lda #'1'
+  sta RNBW_BUF_OUT+13
 
 .else
 
   ; set server host name and port
-  lda #3
+  lda #4
   clc
   adc hostnameLength
   sta RNBW_BUF_OUT+0
@@ -69,10 +71,12 @@ chatConnect:
   sta RNBW_BUF_OUT+2
   lda port+1
   sta RNBW_BUF_OUT+3
+  lda hostnameLength
+  sta RNBW_BUF_OUT+4
   ldx #0
 -
   lda hostname,x
-  sta RNBW_BUF_OUT+4,x
+  sta RNBW_BUF_OUT+5,x
   inx
   cpx hostnameLength
   bne -

@@ -3,7 +3,7 @@
 
 ; uncomment BOTH lines to hardcode server hostname and port
 .define SERVER_HOSTNAME "127.0.0.1"
-SERVER_PORT = 8000
+SERVER_PORT = 1235 ;8000
 
 ; ################################################################################
 ; ZEROPAGE + MISC
@@ -144,6 +144,12 @@ TEXT_MAX_LENGTH     = 28
 .endproc
 
 .proc chatLoop
+
+  ; keep connection alive
+  lda PPU::FRAME_CNT1
+  bne :+
+    jsr keepAlive
+:
 
   ; check for incomming data from ESP
   bit RNBW::RX
@@ -410,10 +416,18 @@ skipSTARTpressed:
   adc textCursorPos
   sta RNBW::BUF_OUT+0
 
+  ; update opcode
+  lda #1
+  sta RNBW::BUF_OUT+2
+
   ; send data using the Rainbow output buffer
   lda #<RNBW::BUF_OUT
   ldx #>RNBW::BUF_OUT
-  jsr RNBW::sendData
+  sta RNBW::TX
+  ; wait for message to be sent
+:
+  bit RNBW::TX
+  bpl :-
 
   ; clear text input
   lda #<txtBlank

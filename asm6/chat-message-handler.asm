@@ -237,6 +237,22 @@ updateChatNTaddress:
   rts
 
 
+keepAlive:
+
+  lda #2
+  sta RNBW_BUF_OUT+0
+  lda #TOESP_SERVER_SEND_MSG
+  sta RNBW_BUF_OUT+1
+  lda #2
+  sta RNBW_BUF_OUT+2
+  sta RNBW_TX
+  ; wait for message to be sent
+-
+  bit RNBW_TX
+  bpl -
+
+  ; return
+  rts
 
 
 ;clearLine:

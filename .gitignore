@@ -1,11 +1,15 @@
-
 #asm6
 /asm6/bin
 /asm6/*.exe
+/asm6/roms/*.deb
+/asm6/roms/*.lst
 
 #cc65
 /cc65/bin/*.exe
 /cc65/roms/bak/*
+/cc65/roms/*.dbg
+/cc65/roms/*.deb
+/cc65/roms/*.nl
 /cc65/obj/
 
 # server

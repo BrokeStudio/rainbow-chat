@@ -142,6 +142,12 @@ chatInit:
 
 chatLoop:
 
+  ; keep connection alive
+  lda FRAME_CNT1
+  bne +
+    jsr keepAlive
++
+
   ; check for incomming data from ESP
   bit RNBW_RX
   bpl +
@@ -407,10 +413,18 @@ sendMessage:
   adc textCursorPos
   sta RNBW_BUF_OUT+0
 
+  ; update opcode
+  lda #1
+  sta RNBW_BUF_OUT+2
+
   ; send data using the Rainbow output buffer
   lda #<RNBW_BUF_OUT
   ldx #>RNBW_BUF_OUT
-  jsr RNBW_sendData
+  sta RNBW_TX
+  ; wait for message to be sent
+-
+  bit RNBW_TX
+  bpl -
 
   ; clear text input
   lda #<txtBlank

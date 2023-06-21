@@ -12,7 +12,7 @@
   sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_SET_PROTOCOL
   sta RNBW::BUF_OUT+1
-  lda #RNBW::SERVER_PROTOCOLS::WS
+  lda #RNBW::SERVER_PROTOCOLS::UDP
   sta RNBW::BUF_OUT+2
   sta RNBW::TX
 
@@ -23,7 +23,7 @@
 
   ; set server host name and port
 .ifdef SERVER_PORT
-  lda #( 3 + .strlen(SERVER_HOSTNAME) )
+  lda #( 4 + .strlen(SERVER_HOSTNAME) )
   sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_SET_SETTINGS
   sta RNBW::BUF_OUT+1
@@ -31,15 +31,17 @@
   sta RNBW::BUF_OUT+2
   lda #<SERVER_PORT
   sta RNBW::BUF_OUT+3
+  lda #.strlen(SERVER_HOSTNAME)
+  sta RNBW::BUF_OUT+4
   .repeat .strlen(SERVER_HOSTNAME),I
     lda #.strat(SERVER_HOSTNAME,I)
-    sta RNBW::BUF_OUT+4+I
+    sta RNBW::BUF_OUT+5+I
   .endrepeat
 
 .else
 
   ; set server host name and port
-  lda #3
+  lda #4
   clc
   adc hostnameLength
   sta RNBW::BUF_OUT+0
@@ -50,10 +52,12 @@
   sta RNBW::BUF_OUT+2
   lda port+1
   sta RNBW::BUF_OUT+3
+  lda hostnameLength
+  sta RNBW::BUF_OUT+4
   ldx #0
 :
   lda hostname,x
-  sta RNBW::BUF_OUT+4,x
+  sta RNBW::BUF_OUT+5,x
   inx
   cpx hostnameLength
   bne :-

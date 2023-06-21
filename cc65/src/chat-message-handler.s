@@ -238,6 +238,25 @@ skipFillingMessage:
 
 .endproc
 
+.proc keepAlive
+
+  lda #2
+  sta RNBW::BUF_OUT+0
+  lda #RNBW::TO_ESP::SERVER_SEND_MESSAGE
+  sta RNBW::BUF_OUT+1
+  lda #2
+  sta RNBW::BUF_OUT+2
+  sta RNBW::TX
+  ; wait for message to be sent
+:
+  bit RNBW::TX
+  bpl :-
+
+  ; return
+  rts
+
+.endproc
+
 /*
 .proc clearLine
   ; A = MSB NT address
