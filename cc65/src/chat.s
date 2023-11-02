@@ -2,8 +2,9 @@
 ; CONSTANTS
 
 ; uncomment BOTH lines to hardcode server hostname and port
+;.define SERVER_HOSTNAME "localhost"
 .define SERVER_HOSTNAME "127.0.0.1"
-SERVER_PORT = 1235 ;8000
+SERVER_PORT = 1234 ;8000
 
 ; ################################################################################
 ; ZEROPAGE + MISC
@@ -20,6 +21,7 @@ messageLength:  .res 1  ; message length
 messageEnd:     .res 1  ; message end index
 NTaddress:      .res 2  ; NT VRAM address to update
 chatState:      .res 1  ; chat state (HOSTNAME | PORT | USERNAME | CHAT)
+connectedToServer:  .res 1
 
 ; chat-settings
 username:       .res 8  ; username string, max  8 characters

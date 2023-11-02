@@ -19,6 +19,7 @@ messageLength  .dsb 1  ; message length
 messageEnd     .dsb 1  ; message end index
 NTaddress      .dsb 2  ; NT VRAM address to update
 chatState      .dsb 1  ; chat state (HOSTNAME | PORT | USERNAME | CHAT)
+connectedToServer .dsb 1
 
 ; chat-settings
 username       .dsb 8  ; username string, max  8 characters

@@ -5,7 +5,7 @@ const { performance } = require("perf_hooks");
 const dgram = require("dgram");
 
 // set some constants
-const HEARTBEAT_INTERVAL = 5000; // 5 seconds
+const HEARTBEAT_INTERVAL = 10000; // 10 seconds
 const HTTP_PORT = 1234;
 
 const server = dgram.createSocket("udp4");
@@ -53,6 +53,7 @@ server.on("message", (data, remote) => {
       user = getUser(remote.port, remote.address);
       if (Object.keys(user).length !== 0) {
         console.log(`${user.username}: ${text}`);
+        user.lastSeen = performance.now();
         users.forEach((user) => {
           msg = "\x01" + user.username + "\x00" + text;
           client.send(msg, user.port, user.address);
@@ -62,7 +63,7 @@ server.on("message", (data, remote) => {
       }
       break;
 
-    // pong
+    // ping / keep alive from client
     case 2:
       user = getUser(remote.port, remote.address);
       if (Object.keys(user).length !== 0) {
@@ -86,7 +87,11 @@ const interval = setInterval(function ping() {
     // check when we saw the user for the last time
     if (performance.now() - user.lastSeen > HEARTBEAT_INTERVAL) {
       users.splice(users.indexOf(user), 1);
-      console.log(`${user.username} has been disconnected.`);
+      console.log(
+        `${user.username} has been disconnected (${
+          (performance.now() - user.lastSeen) / 1000
+        }).`
+      );
     }
   });
 }, HEARTBEAT_INTERVAL);

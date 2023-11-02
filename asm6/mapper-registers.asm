@@ -98,11 +98,11 @@ MAP_MUL_A           = $4161
 MAP_MUL_B           = $4162
 
 ; ESP / WiFi
-MAP_RNBW_CONFIG     = $4170
-MAP_RNBW_RX         = $4171
-MAP_RNBW_TX         = $4172
-MAP_RNBW_RX_ADD     = $4173
-MAP_RNBW_TX_ADD     = $4174
+MAP_RNBW_CONFIG     = $4190
+MAP_RNBW_RX         = $4191
+MAP_RNBW_TX         = $4192
+MAP_RNBW_RX_ADD     = $4193
+MAP_RNBW_TX_ADD     = $4194
 
 ; Audio expansion
 MAP_SND_P1_CTRL     = $41A0

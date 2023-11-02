@@ -240,6 +240,9 @@ skipFillingMessage:
 
 .proc keepAlive
 
+  lda connectedToServer
+  beq done
+
   lda #2
   sta RNBW::BUF_OUT+0
   lda #RNBW::TO_ESP::SERVER_SEND_MESSAGE
@@ -252,6 +255,7 @@ skipFillingMessage:
   bit RNBW::TX
   bpl :-
 
+done:
   ; return
   rts
 

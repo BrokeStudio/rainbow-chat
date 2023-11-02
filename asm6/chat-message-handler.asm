@@ -239,6 +239,9 @@ updateChatNTaddress:
 
 keepAlive:
 
+  lda connectedToServer
+  beq +
+
   lda #2
   sta RNBW_BUF_OUT+0
   lda #TOESP_SERVER_SEND_MSG
@@ -251,6 +254,7 @@ keepAlive:
   bit RNBW_TX
   bpl -
 
++
   ; return
   rts
 

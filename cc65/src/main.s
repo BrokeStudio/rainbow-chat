@@ -7,7 +7,6 @@
 .segment "HEADER"
 .import NES_MAPPER,NES_PRG_BANKS,NES_CHR_BANKS
 
-
 ; NES 2.0 format
 .byte "NES", $1A      ; flags 0-3: ines magic
 .byte <NES_PRG_BANKS  ; flag 4
