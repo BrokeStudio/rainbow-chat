@@ -3,8 +3,8 @@
 
 ; uncomment BOTH lines to hardcode server hostname and port
 ;.define SERVER_HOSTNAME "localhost"
-.define SERVER_HOSTNAME "127.0.0.1"
-SERVER_PORT = 1234 ;8000
+;.define SERVER_HOSTNAME "127.0.0.1"
+;SERVER_PORT = 1234 ;8000
 
 ; ################################################################################
 ; ZEROPAGE + MISC
@@ -259,22 +259,22 @@ skipUPpressed:
 skipDOWNpressed:
 
   lda pad::pressed
-  and #PAD_A
-  beq skipApressed
+  and #PAD_B
+  beq skipBpressed
 removeChar:
     ; remove last character from text input
     jsr removeCharacter
-skipApressed:
+skipBpressed:
 
   lda pad::pressed
-  and #PAD_B
-  beq skipBpressed
+  and #PAD_A
+  beq skipApressed
     ; add a new character to text input
     lda cursorPos
     clc
     adc #$21
     jsr addCharacter
-skipBpressed:
+skipApressed:
 
   lda pad::pressed
   and #PAD_SELECT

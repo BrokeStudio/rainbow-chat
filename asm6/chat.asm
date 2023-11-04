@@ -3,7 +3,7 @@
 
 ; uncomment this line to use hardcoded server hostname and port
 ; see chatConnect in chat-connections.asm file
-localhost EQU 1
+;localhost EQU 1
 
 ; ################################################################################
 ; ZEROPAGE + MISC
@@ -255,22 +255,22 @@ skipUPpressed:
 skipDOWNpressed:
 
   lda padPressed
-  and #PAD_A
-  beq skipApressed
+  and #PAD_B
+  beq skipBpressed
 removeChar:
     ; remove last character from text input
     jsr removeCharacter
-skipApressed:
+skipBpressed:
 
   lda padPressed
-  and #PAD_B
-  beq skipBpressed
+  and #PAD_A
+  beq skipApressed
     ; add a new character to text input
     lda cursorPos
     clc
     adc #$21
     jsr addCharacter
-skipBpressed:
+skipApressed:
 
   lda padPressed
   and #PAD_SELECT
