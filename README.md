@@ -1,34 +1,6 @@
 # RAINBOW CHAT demo for the NES
 
-> &nbsp;  
-> Here's a quick tutorial on how to use this online chat demo for the NES.  
-> &nbsp;
-
-#### changelog
-
-2023/06/21
-
-- code updated to match last rainbow wifi protocol update
-- removed HTML client
-
-2022/02/23
-
-- code updated to match last rainbow wifi protocol update
-- asm6 version added
-
-2020/07/15
-
-- code updated to match last rainbow wifi protocol update
-- doc updated
-
-2020/05/10
-
-- code updated to support new rainbow mapper
-- doc updated
-
-2020/03/17
-
-- initial release
+Here's a quick tutorial on how to use this online chat demo for the NES.
 
 ## SERVER
 
@@ -47,20 +19,17 @@ Look for `HTTP_PORT` (1234 by default) and change its value (don't forget to res
 
 ## NES CLIENT
 
-To use the NES client, you need a custom version of FCEUX including the online functionnalities.
+To use the NES client, you need a custom version of [Mesen2](https://brokestudio.fr/rainbow/emulators/mesen) or [FCEUX](https://brokestudio.fr/rainbow/emulators/fceux) supporting the Rainbow mapper, including the online functionnalities.
 
-You can download a compiled build for Windows here: http://brokestudio.fr/rainbow
+Just load the ROM **rainbow-chat.nes** file into the emulator, enter the IP address of the server (127.0.0.1 should work if you didn't change anything), the port (1234 should work if you didn't change anything), a username, and that should do it :)
 
-Or you can build it yourself by cloning this GIT repository: https://github.com/BrokeStudio/fceux (branch rainbow, not master).
-
-Just load the ROM **rainbow-chat.nes** file into FCEUX, enter the IP address of the server (127.0.0.1 should work if you didn't change anything), the port (1234 should work if you didn't change anything), a username, and that should do it :)  
-You can now exchange messages with the WEB client. You can even add another (or more) WEB client(s) / FCEUX emu to the game for more fun. I didn't tested it with more than 3 clients in total so...
+You can now send messages to the server which will then send it to the clients. You can even add another emulator to the game for more fun.
 
 ## ROM COMPILATION
 
 ### ASM6
 
-At the top of the `chat.asm` file, you can comment/uncomment 1 lines to hardcode IP address and port.  
+At the top of the `chat.asm` file, you can comment/uncomment 1 line to hardcode IP address and port.  
 Values can be changed in `chat-connection.asm` at lines ~27-56.
 
 The `compile.bat` file expects some **asm6.exe** executable in the same folder.
@@ -77,7 +46,7 @@ just update the `compile.bat` file to point to your files directly.
 
 ## INFO / DOCUMENTATION
 
-For more information on the Rainbow project, you can check its documentation here: https://github.com/BrokeStudio/rainbow-lib
+For more information on the Rainbow project, you can check its documentation here: https://github.com/BrokeStudio/rainbow-net
 
 While this is a demo using an emulator, the thing works perfectly fine on the original hardware with the Rainbow cartridge.
 
