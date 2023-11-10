@@ -2,11 +2,11 @@
 ; RAINBOW CONSTANTS
 
 ; Rainbow mapper registers
-RNBW_CONFIG    EQU $4190
-RNBW_RX        EQU $4191
-RNBW_TX        EQU $4192
-RNBW_RX_ADD    EQU $4193
-RNBW_TX_ADD    EQU $4194
+RNBW_CONFIG    EQU $4170
+RNBW_RX        EQU $4171
+RNBW_TX        EQU $4172
+RNBW_RX_ADD    EQU $4173
+RNBW_TX_ADD    EQU $4174
 
 ; commands to ESP
 
@@ -52,72 +52,73 @@ TOESP_SERVER_DISCONNECT               EQU 29  ; Disconnect from server
 TOESP_SERVER_SEND_MSG                 EQU 30  ; Send message to rainbow server
 
 ; NETWORK CMDS
-TOESP_NETWORK_SCAN                    EQU 31  ; Scan networks around and return count
-TOESP_NETWORK_GET_SCANNED_DETAILS     EQU 32  ; Get scanned network details
-TOESP_NETWORK_GET_REGISTERED          EQU 33  ; Get registered networks status
-TOESP_NETWORK_GET_REGISTERED_DETAILS  EQU 34  ; Get registered network SSID
-TOESP_NETWORK_REGISTER                EQU 35  ; Register network
-TOESP_NETWORK_UNREGISTER              EQU 36  ; Unregister network
-TOESP_NETWORK_SET_ACTIVE              EQU 37  ; Set active network
+TOESP_NETWORK_SCAN                    EQU 31  ; Scan networks around synchronously or asynchronously
+TOESP_NETWORK_GET_SCAN_RESULT         EQU 32  ; Get result of the last scan
+TOESP_NETWORK_GET_SCANNED_DETAILS     EQU 33  ; Get scanned network details
+TOESP_NETWORK_GET_REGISTERED          EQU 34  ; Get registered networks status
+TOESP_NETWORK_GET_REGISTERED_DETAILS  EQU 35  ; Get registered network SSID
+TOESP_NETWORK_REGISTER                EQU 36  ; Register network
+TOESP_NETWORK_UNREGISTER              EQU 37  ; Unregister network
+TOESP_NETWORK_SET_ACTIVE              EQU 38  ; Set active network
 
 ; FILE COMMANDS
-TOESP_FILE_OPEN                       EQU 38  ; Open working file
-TOESP_FILE_CLOSE                      EQU 39  ; Close working file
-TOESP_FILE_STATUS                     EQU 40  ; Get working file status
-TOESP_FILE_EXISTS                     EQU 41  ; Check if file exists
-TOESP_FILE_DELETE                     EQU 42  ; Delete a file
-TOESP_FILE_SET_CUR                    EQU 43  ; Set working file cursor position a file
-TOESP_FILE_READ                       EQU 44  ; Read working file (at specific position)
-TOESP_FILE_WRITE                      EQU 45  ; Write working file (at specific position)
-TOESP_FILE_APPEND                     EQU 46  ; Append data to working file
-TOESP_FILE_COUNT                      EQU 47  ; Count files in a specific path
-TOESP_FILE_GET_LIST                   EQU 48  ; Get list of existing files in a path
-TOESP_FILE_GET_FREE_ID                EQU 49  ; Get an unexisting file ID in a specific path
-TOESP_FILE_GET_FS_INFO                EQU 50  ; Get file system details (ESP flash or SD card)
-TOESP_FILE_GET_INFO                   EQU 51  ; Get file info (size + crc32)
-TOESP_FILE_DOWNLOAD                   EQU 52  ; Download a file
-TOESP_FILE_FORMAT                     EQU 53  ; Format file system and save current config
+TOESP_FILE_OPEN                       EQU 39  ; Open working file
+TOESP_FILE_CLOSE                      EQU 40  ; Close working file
+TOESP_FILE_STATUS                     EQU 41  ; Get working file status
+TOESP_FILE_EXISTS                     EQU 42  ; Check if file exists
+TOESP_FILE_DELETE                     EQU 43  ; Delete a file
+TOESP_FILE_SET_CUR                    EQU 44  ; Set working file cursor position a file
+TOESP_FILE_READ                       EQU 45  ; Read working file (at specific position)
+TOESP_FILE_WRITE                      EQU 46  ; Write working file (at specific position)
+TOESP_FILE_APPEND                     EQU 47  ; Append data to working file
+TOESP_FILE_COUNT                      EQU 48  ; Count files in a specific path
+TOESP_FILE_GET_LIST                   EQU 49  ; Get list of existing files in a path
+TOESP_FILE_GET_FREE_ID                EQU 50  ; Get an unexisting file ID in a specific path
+TOESP_FILE_GET_FS_INFO                EQU 51  ; Get file system details (ESP flash or SD card)
+TOESP_FILE_GET_INFO                   EQU 52  ; Get file info (size + crc32)
+TOESP_FILE_DOWNLOAD                   EQU 53  ; Download a file
+TOESP_FILE_FORMAT                     EQU 54  ; Format file system and save current config
 
 ; commands from ESP
 
 ; ESP CMDS
 FROMESP_READY                         EQU 0   ; ESP is ready
-FROMESP_DEBUG_LEVEL                   EQU 1   ; Returns debug configuration
-FROMESP_ESP_FIRMWARE_VERSION          EQU 2   ; Returns ESP/Rainbow firmware version
+FROMESP_DEBUG_LEVEL                   EQU 1   ; Return debug configuration
+FROMESP_ESP_FIRMWARE_VERSION          EQU 2   ; Return ESP/Rainbow firmware version
 FROMESP_ESP_FACTORY_RESET             EQU 3   ; See ESP_FACTORY_RESET_RES constants for details on returned value
 
 ; WIFI / ACCESS POINT CMDS
-FROMESP_WIFI_STATUS                   EQU 4   ; Returns Wi-Fi connection status
-FROMESP_SSID                          EQU 5   ; Returns Wi-Fi / Access Point SSID
-FROMESP_IP                            EQU 6   ; Returns Wi-Fi / Access Point IP address
-FROMESP_WIFI_CONFIG                   EQU 7   ; Returns Wi-Fi station / Access Point / Web Server
+FROMESP_WIFI_STATUS                   EQU 4   ; Return Wi-Fi connection status
+FROMESP_SSID                          EQU 5   ; Return Wi-Fi / Access Point SSID
+FROMESP_IP                            EQU 6   ; Return Wi-Fi / Access Point IP address
+FROMESP_WIFI_CONFIG                   EQU 7   ; Return Wi-Fi station / Access Point / Web Server status
 
 ; RND CMDS
-FROMESP_RND_BYTE                      EQU 8   ; Returns random byte value
-FROMESP_RND_WORD                      EQU 9   ; Returns random word value
+FROMESP_RND_BYTE                      EQU 8   ; Return random byte value
+FROMESP_RND_WORD                      EQU 9   ; Return random word value
 
 ; SERVER CMDS
-FROMESP_SERVER_STATUS                 EQU 10   ; Returns server connection status
-FROMESP_SERVER_PING                   EQU 11  ; Returns min, max and average round-trip time and number of lost packets
-FROMESP_SERVER_SETTINGS               EQU 12  ; Returns server settings (host name + port)
+FROMESP_SERVER_STATUS                 EQU 10  ; Return server connection status
+FROMESP_SERVER_PING                   EQU 11  ; Return min, max and average round-trip time and number of lost packets
+FROMESP_SERVER_SETTINGS               EQU 12  ; Return server settings (host name + port)
 FROMESP_MESSAGE_FROM_SERVER           EQU 13  ; Message from server
 
 ; NETWORK CMDS
-FROMESP_NETWORK_COUNT                 EQU 14  ; Returns number of networks found
-FROMESP_NETWORK_SCANNED_DETAILS       EQU 15  ; Returns details for a scanned network
-FROMESP_NETWORK_REGISTERED_DETAILS    EQU 16  ; Returns SSID for a registered network
-FROMESP_NETWORK_REGISTERED            EQU 17  ; Returns registered networks status
+FROMESP_NETWORK_SCAN_RESULT           EQU 14  ; Return result of last scan
+FROMESP_NETWORK_SCANNED_DETAILS       EQU 15  ; Return details for a scanned network
+FROMESP_NETWORK_REGISTERED_DETAILS    EQU 16  ; Return SSID for a registered network
+FROMESP_NETWORK_REGISTERED            EQU 17  ; Return registered networks status
 
 ; FILE CMDS
-FROMESP_FILE_STATUS                   EQU 18  ; Returns working file status
-FROMESP_FILE_EXISTS                   EQU 19  ; Returns if file exists or not
+FROMESP_FILE_STATUS                   EQU 18  ; Return working file status
+FROMESP_FILE_EXISTS                   EQU 19  ; Return if file exists or not
 FROMESP_FILE_DELETE                   EQU 20  ; See RNBW_FILE_DELETE_xxx constants for details on returned value
-FROMESP_FILE_LIST                     EQU 21  ; Returns path file list (FILE_GET_LIST)
-FROMESP_FILE_DATA                     EQU 22  ; Returns file data (FILE_READ)
-FROMESP_FILE_COUNT                    EQU 23  ; Returns file count in a specific path
-FROMESP_FILE_ID                       EQU 24  ; Returns a free file ID (FILE_GET_FREE_ID)
-FROMESP_FILE_FS_INFO                  EQU 25  ; Returns file system info (FILE_GET_FS_INFO)
-FROMESP_FILE_INFO                     EQU 26  ; Returns file info (size + CRC32) (FILE_GET_INFO)
+FROMESP_FILE_LIST                     EQU 21  ; Return path file list
+FROMESP_FILE_DATA                     EQU 22  ; Return file data
+FROMESP_FILE_COUNT                    EQU 23  ; Return file count in a specific path
+FROMESP_FILE_ID                       EQU 24  ; Return a free file ID
+FROMESP_FILE_FS_INFO                  EQU 25  ; Return file system info
+FROMESP_FILE_INFO                     EQU 26  ; Return file info (size + CRC32)
 FROMESP_FILE_DOWNLOAD                 EQU 27  ; See RNBW_FILE_DOWNLOAD_xxx constants for details on returned value
 
 ; ESP factory reset result codes

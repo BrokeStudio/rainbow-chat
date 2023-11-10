@@ -1,5 +1,5 @@
-.define STR_BUILD "287"
-BUILD = 287
+.define STR_BUILD "288"
+BUILD = 288
 
 .define STR_VERSION "0.0.1"
 ;VERSION = 0.0.1
