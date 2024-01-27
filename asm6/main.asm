@@ -3,6 +3,7 @@
 
 .enum $0000
 
+; 0x02AA = 682 : Rainbow mapper on FCEUX and Mesen2
 NES_MAPPER    EQU 682
 NES_PRG_BANKS EQU 64
 NES_CHR_BANKS EQU 0
