@@ -2,28 +2,36 @@
 .feature force_range
 .linecont +
 
-; ################################################################################
-; HEADER
+/*
+                                                                          
+88                                            88                          
+88                                            88                          
+88                                            88                          
+88,dPPYba,    ,adPPYba,  ,adPPYYba,   ,adPPYb,88   ,adPPYba,  8b,dPPYba,  
+88P'    "8a  a8P_____88  ""     `Y8  a8"    `Y88  a8P_____88  88P'   "Y8  
+88       88  8PP"""""""  ,adPPPPP88  8b       88  8PP"""""""  88          
+88       88  "8b,   ,aa  88,    ,88  "8a,   ,d88  "8b,   ,aa  88          
+88       88   `"Ybbd8"'  `"8bbdP"Y8   `"8bbdP"Y8   `"Ybbd8"'  88          
+                                                                          
+                                                                          
+*/
+
 .segment "HEADER"
-.import NES_MAPPER,NES_PRG_BANKS,NES_CHR_BANKS
+.include "header.s"
 
-; NES 2.0 format
-.byte "NES", $1A      ; flags 0-3: ines magic
-.byte <NES_PRG_BANKS  ; flag 4
-.byte <NES_CHR_BANKS  ; flag 5
-.byte <((NES_MAPPER&$0F)<<4) ; flag 6
-.byte <((NES_MAPPER&$F0)|%00001000) ; flag 7: upper nybble of mapper number + iNES 2.0
-.byte <((NES_MAPPER&$F00)>>8) ; flag 8
-.byte ((>NES_CHR_BANKS)<<4)|>NES_PRG_BANKS
-.byte 0 ; flag 10: PRG-RAM shift counter - (64 << shift counter)
-.byte 9 ; flag 11: CHR-RAM shift counter - (64 << shift counter)
-.byte $00   ; flag 12
-.byte $00   ; flag 13
-.byte $00   ; flag 14
-.byte $00   ; flag 15
-
-; ################################################################################
-; ZEROPAGE
+/*
+                                                                                                  
+                                                                                                  
+                                                                                                  
+                                                                                                  
+888888888   ,adPPYba,  8b,dPPYba,   ,adPPYba,   8b,dPPYba,   ,adPPYYba,   ,adPPYb,d8   ,adPPYba,  
+     a8P"  a8P_____88  88P'   "Y8  a8"     "8a  88P'    "8a  ""     `Y8  a8"    `Y88  a8P_____88  
+  ,d8P'    8PP"""""""  88          8b       d8  88       d8  ,adPPPPP88  8b       88  8PP"""""""  
+,d8"       "8b,   ,aa  88          "8a,   ,a8"  88b,   ,a8"  88,    ,88  "8a,   ,d88  "8b,   ,aa  
+888888888   `"Ybbd8"'  88           `"YbbdP"'   88`YbbdP"'   `"8bbdP"Y8   `"YbbdP"Y8   `"Ybbd8"'  
+                                                88                        aa,    ,88              
+                                                88                         "Y8bbdP"               
+*/
 
 .zeropage
 
