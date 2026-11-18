@@ -1,9 +1,5 @@
-.enum $0000
-
 STR_BUILD EQU "261"
 BUILD = 261
 
 STR_VERSION EQU "0.0.1"
 ;VERSION = 0.0.1
-
-.ende

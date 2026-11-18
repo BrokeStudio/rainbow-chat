@@ -63,8 +63,14 @@
 
   .base $8000
 
-; ################################################################################
-; INCLUDES
+; 88                           88                        88                         
+; ""                           88                        88                         
+;                              88                        88                         
+; 88  8b,dPPYba,    ,adPPYba,  88  88       88   ,adPPYb,88   ,adPPYba,  ,adPPYba,  
+; 88  88P'   `"8a  a8"     ""  88  88       88  a8"    `Y88  a8P_____88  I8[    ""  
+; 88  88       88  8b          88  88       88  8b       88  8PP"""""""   `"Y8ba,   
+; 88  88       88  "8a,   ,aa  88  "8a,   ,a88  "8a,   ,d88  "8b,   ,aa  aa    ]8I  
+; 88  88       88   `"Ybbd8"'  88   `"YbbdP'Y8   `"8bbdP"Y8   `"Ybbd8"'  `"YbbdP"'  
 
 ; MAPPER REGISTERS
 .include "mapper-registers.asm"
@@ -83,11 +89,15 @@
 ; CHAT
 .include "chat.asm"
 
-; ################################################################################
-; CONSTANTS
-
-; ################################################################################
-; CODE
+;              ,d                               ,d                               
+;              88                               88                               
+; ,adPPYba,  MM88MMM  ,adPPYYba,  8b,dPPYba,  MM88MMM  88       88  8b,dPPYba,   
+; I8[    ""    88     ""     `Y8  88P'   "Y8    88     88       88  88P'    "8a  
+;  `"Y8ba,     88     ,adPPPPP88  88            88     88       88  88       d8  
+; aa    ]8I    88,    88,    ,88  88            88,    "8a,   ,a88  88b,   ,a8"  
+; `"YbbdP"'    "Y888  `"8bbdP"Y8  88            "Y888   `"YbbdP'Y8  88`YbbdP"'   
+;                                                                   88           
+;                                                                   88           
 
   vector_reset:
 
@@ -145,6 +155,7 @@ waitSync3:
 
   ; initialize sound APU
   ldx #$00
+  txa
 apu_clear_loop:
   sta $4000, X            ; write 0 to most APU registers
   inx
@@ -348,7 +359,7 @@ credits:
   .db "b"
   build:
   .db STR_BUILD
-  .db "/2020-2023 Broke Studio"
+  .db "/2020-2026 Broke Studio"
   .db "/code Antoine Gohin"
   .db "/thx Ludy<3/"
 

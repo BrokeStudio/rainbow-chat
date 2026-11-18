@@ -154,6 +154,8 @@ wait2seconds:
 
 connected:
 
+  inc connectedToServer
+
   ; register username
   lda #2
   clc

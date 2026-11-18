@@ -54,9 +54,8 @@
 	; the copyright notice and this notice are preserved in all source
 	; code copies.  This file is offered as-is, without any warranty.
 	;
-	;.segment "CODE"
 	.align 32
-	;;
+	;
 	; Detects which of NTSC, PAL, or Dendy is in use by counting cycles
 	; between NMIs.
 	;

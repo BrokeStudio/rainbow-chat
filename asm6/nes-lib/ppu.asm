@@ -13,9 +13,8 @@
 	; the copyright notice and this notice are preserved in all source
 	; code copies.  This file is offered as-is, without any warranty.
 	;
-	;.segment "CODE"
 	.align 32
-	;;
+	;
 	; Detects which of NTSC, PAL, or Dendy is in use by counting cycles
 	; between NMIs.
 	;
@@ -421,7 +420,7 @@
 
 		J=0
 		I=0
-		.rept 3
+		.rept 4
 		lda PPU_DATA            ;skip background color
 		.rept 3
 		lda PAL_BUF+17+(J*4)+I

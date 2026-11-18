@@ -6,8 +6,6 @@
   "objPath": "obj",
   "romsPath": "roms",
   "bin": "local",
-  "sources": [
-    "src/main.s"
-  ],
+  "sources": ["src/main.s"],
   "libraries": []
 }

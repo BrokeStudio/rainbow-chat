@@ -69,8 +69,19 @@ zp29:               .res 1
 zp30:               .res 1
 zp31:               .res 1
 
-; ################################################################################
-; INCLUDES
+/*
+                                                                                  
+88                           88                        88                         
+""                           88                        88                         
+                             88                        88                         
+88  8b,dPPYba,    ,adPPYba,  88  88       88   ,adPPYb,88   ,adPPYba,  ,adPPYba,  
+88  88P'   `"8a  a8"     ""  88  88       88  a8"    `Y88  a8P_____88  I8[    ""  
+88  88       88  8b          88  88       88  8b       88  8PP"""""""   `"Y8ba,   
+88  88       88  "8a,   ,aa  88  "8a,   ,a88  "8a,   ,d88  "8b,   ,aa  aa    ]8I  
+88  88       88   `"Ybbd8"'  88   `"YbbdP'Y8   `"8bbdP"Y8   `"Ybbd8"'  `"YbbdP"'  
+                                                                                  
+                                                                                  
+*/
 
 ; MAPPER REGISTERS
 .include "mapper-registers.s"
@@ -95,11 +106,19 @@ zp31:               .res 1
 .segment "CODE"
 .include "chat.s"
 
-; ################################################################################
-; CONSTANTS
-
-; ################################################################################
-; CODE
+/*
+                                                                               
+                                                                               
+             ,d                               ,d                               
+             88                               88                               
+,adPPYba,  MM88MMM  ,adPPYYba,  8b,dPPYba,  MM88MMM  88       88  8b,dPPYba,   
+I8[    ""    88     ""     `Y8  88P'   "Y8    88     88       88  88P'    "8a  
+ `"Y8ba,     88     ,adPPPPP88  88            88     88       88  88       d8  
+aa    ]8I    88,    88,    ,88  88            88,    "8a,   ,a88  88b,   ,a8"  
+`"YbbdP"'    "Y888  `"8bbdP"Y8  88            "Y888   `"YbbdP'Y8  88`YbbdP"'   
+                                                                  88           
+                                                                  88           
+*/
 
 .segment "CODE"
   vector_reset:
@@ -158,6 +177,7 @@ waitSync3:
 
   ; initialize sound APU
   ldx #$00
+  txa
 apu_clear_loop:
   sta $4000, X            ; write 0 to most APU registers
   inx
@@ -248,8 +268,19 @@ apu_clear_loop:
   ; start chat
   jsr startChat
 
-; ################################################################################
-; NMI HANDLER
+/*
+                                     
+                                 88  
+                                 ""  
+                                     
+8b,dPPYba,   88,dPYba,,adPYba,   88  
+88P'   `"8a  88P'   "88"    "8a  88  
+88       88  88      88      88  88  
+88       88  88      88      88  88  
+88       88  88      88      88  88  
+                                     
+                                     
+*/
 
 .proc vector_nmi
   ; save stack
@@ -338,21 +369,54 @@ skipNtsc:
   rti
 .endproc
 
-; ################################################################################
-; IRQ HANDLER
+/*
+                             
+88                           
+""                           
+                             
+88  8b,dPPYba,   ,adPPYb,d8  
+88  88P'   "Y8  a8"    `Y88  
+88  88          8b       88  
+88  88          "8a    ,d88  
+88  88           `"YbbdP'88  
+                         88  
+                         88  
+*/
 
 .proc vector_irq
   rti
 .endproc
 
-; ################################################################################
-; DATAS
+/*
+                                              
+         88                                   
+         88                ,d                 
+         88                88                 
+ ,adPPYb,88  ,adPPYYba,  MM88MMM  ,adPPYYba,  
+a8"    `Y88  ""     `Y8    88     ""     `Y8  
+8b       88  ,adPPPPP88    88     ,adPPPPP88  
+"8a,   ,d88  88,    ,88    88,    88,    ,88  
+ `"8bbdP"Y8  `"8bbdP"Y8    "Y888  `"8bbdP"Y8  
+                                              
+                                              
+*/
 
 asciiCHR:
   .incbin "gfx/ascii.chr.rle"
 
-; ################################################################################
-; CREDITS
+/*
+                                                                         
+                                             88  88                      
+                                             88  ""    ,d                
+                                             88        88                
+ ,adPPYba,  8b,dPPYba,   ,adPPYba,   ,adPPYb,88  88  MM88MMM  ,adPPYba,  
+a8"     ""  88P'   "Y8  a8P_____88  a8"    `Y88  88    88     I8[    ""  
+8b          88          8PP"""""""  8b       88  88    88      `"Y8ba,   
+"8a,   ,aa  88          "8b,   ,aa  "8a,   ,d88  88    88,    aa    ]8I  
+ `"Ybbd8"'  88           `"Ybbd8"'   `"8bbdP"Y8  88    "Y888  `"YbbdP"'  
+                                                                         
+                                                                         
+*/
 
 credits:
   .byte "/Rainbow Chat example v"
@@ -361,12 +425,23 @@ credits:
   .byte "b"
   build:
   .byte STR_BUILD
-  .byte "/2020-2023 Broke Studio"
+  .byte "/2020-2026 Broke Studio"
   .byte "/code Antoine Gohin"
   .byte "/thx Ludy<3/"
 
-; ################################################################################
-; VECTORS
+/*
+                                                                                 
+                                                                                 
+                                       ,d                                        
+                                       88                                        
+8b       d8   ,adPPYba,   ,adPPYba,  MM88MMM  ,adPPYba,   8b,dPPYba,  ,adPPYba,  
+`8b     d8'  a8P_____88  a8"     ""    88    a8"     "8a  88P'   "Y8  I8[    ""  
+ `8b   d8'   8PP"""""""  8b            88    8b       d8  88           `"Y8ba,   
+  `8b,d8'    "8b,   ,aa  "8a,   ,aa    88,   "8a,   ,a8"  88          aa    ]8I  
+    "8"       `"Ybbd8"'   `"Ybbd8"'    "Y888  `"YbbdP"'   88          `"YbbdP"'  
+                                                                                 
+                                                                                 
+*/
 
 .segment "VECTORS"
   .word vector_nmi    ; $FFFA vblank nmi
