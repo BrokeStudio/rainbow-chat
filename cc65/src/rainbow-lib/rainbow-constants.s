@@ -29,6 +29,11 @@ TX_ADD    = $4194
   WIFI_GET_MAC_ADDRESS = 59             ; Get Wi-Fi mac address
   WIFI_GET_CONFIG = 12                  ; Get Wi-Fi station / Access Point / Web Server config
   WIFI_SET_CONFIG = 13                  ; Set Wi-Fi station / Access Point / Web Server config
+  WIFI_CONNECT = 60                     ; Connect to Wi-Fi if possible
+
+; PING CMDS
+  PING_START = 61                       ; Start pinging passed hostname
+  PING_GET_RESULT = 62                  ; Get ping results
 
 ; ACESS POINT CMDS
   AP_GET_SSID = 14                      ; Get Access Point network SSID
@@ -42,8 +47,9 @@ TX_ADD    = $4194
 
 ; SERVER CMDS
   SERVER_GET_STATUS = 20                ; Get server connection status
-  SERVER_PING = 21                      ; Get ping between ESP and server
-  SERVER_SET_PROTOCOL = 22              ; Set protocol to be used to communicate (WS/UDP/TCP)
+  SERVER_GET_PING = 21                  ; Get ping between ESP and server
+  SERVER_PING_START = 63                ; Start pinging configured server hostname
+  SERVER_SET_PROTOCOL = 22              ; Set protocol to be used to communicate (UDP/TCP)
   SERVER_GET_SETTINGS = 23              ; Get current server host name and port
   SERVER_SET_SETTINGS = 24              ; Set current server host name and port
   SERVER_GET_SAVED_SETTINGS = 25        ; Get server host name and port values saved in the Rainbow config file
@@ -105,6 +111,10 @@ TX_ADD    = $4194
   MAC_ADDRESS = 28                  ; Return Wi-Fi mac address
   WIFI_CONFIG = 7                   ; Return Wi-Fi station / Access Point / Web Server status
 
+; PING CMDS
+  PING_STATUS = 29                  ; Return ping status
+  PING_RESULT = 30                  ; Return ping result
+
 ; RND CMDS
   RND_BYTE = 8                      ; Return random byte value
   RND_WORD = 9                      ; Return random word value
@@ -162,7 +172,6 @@ TX_ADD    = $4194
 
 ; ESP Wi-Fi status
 .enum WIFI_ESP_STATUS
-  NO_SHIELD = 255
   IDLE_STATUS = 0
   NO_SSID_AVAIL
   SCAN_COMPLETED
@@ -171,6 +180,24 @@ TX_ADD    = $4194
   CONNECTION_LOST
   WRONG_PASSWORD
   DISCONNECTED
+.endenum
+
+; Ping start status
+.enum PING_START_STATUS
+  STARTED
+  BUSY
+  BAD_HOST
+  START_FAILED
+  MALFORMED
+.endenum
+
+; Ping result status
+.enum PING_RESULT_STATUS
+  IDLE
+  RUNNING
+  DONE
+  MALFORMED
+  START_FAILED
 .endenum
 
 ; Server protocols
@@ -207,9 +234,9 @@ NUM_FILES = 64
 
 ; Network encryption types
 .enum NETWORK_ENCRYPTION_TYPES
-  WEP = 5
   WPA_PSK = 2
   WPA2_PSK = 4
+  WEP = 5
   OPEN_NETWORK = 7
   WPA_WPA2_PSK = 8
 .endenum
@@ -230,6 +257,7 @@ NUM_FILES = 64
   ERROR_WHILE_DELETING_FILE
   FILE_NOT_FOUND
   INVALID_PATH_OR_FILE
+  MALFORMED_MESSAGE
 .endenum
 
 ; FILE_DOWNLOAD result codes
@@ -239,20 +267,24 @@ NUM_FILES = 64
   ERROR_WHILE_DELETING_FILE
   UNKNOWN_OR_UNSUPPORTED_PROTOCOL
   NETWORK_ERROR
-  HTTP_STATUS_NOT_IN_2XX
+  HTTP_STATUS_NOT_OK
+  MALFORMED_MESSAGE
+  ERROR_WHILE_OPENING_DESTINATION_FILE
+  FAILED_TO_CONNECT_TO_URL
+  TCP_CONNECTION_ACTIVE
 .endenum
 
 ; FILE_DOWNLOAD network error codes
 .enum FILE_DOWNLOAD_NETWORK_ERR
-  CONNECTION_FAILED = -1
-  SEND_HEADER_FAILED = -2
-  SEND_PAYLOAD_FAILED = -3
-  NOT_CONNECTED = -4
-  CONNECTION_LOST = -5
-  NO_STREAM = -6
-  NO_HTTP_SERVER = -7
-  TOO_LESS_RAM = -8
-  ENCODING = -9
-  STREAM_WRITE = -10
-  READ_TIMEOUT = -11
+  CONNECTION_FAILED = 255
+  SEND_HEADER_FAILED = 254
+  SEND_PAYLOAD_FAILED = 253
+  NOT_CONNECTED = 252
+  CONNECTION_LOST = 251
+  NO_STREAM = 250
+  NO_HTTP_SERVER = 249
+  NOT_ENOUGH_RAM = 248
+  TRANSFER_ENCODING_NOT_SUPPORTED = 247
+  STREAM_WRITE_ERROR = 246
+  READ_TIMEOUT = 245
 .endenum
