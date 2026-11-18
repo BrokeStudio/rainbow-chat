@@ -176,14 +176,14 @@ apu_clear_loop:
 
   ; clear prg banks upper bits
   lda #0
-  sta MAP_PRG_6_HI
-  sta MAP_PRG_7_HI
-  sta MAP_PRG_9_HI
-  sta MAP_PRG_A_HI
-  sta MAP_PRG_B_HI
-  sta MAP_PRG_C_HI
-  sta MAP_PRG_D_HI
-  sta MAP_PRG_F_HI
+  sta MAP_PRG_HI_6
+  sta MAP_PRG_HI_7
+  sta MAP_PRG_HI_9
+  sta MAP_PRG_HI_A
+  sta MAP_PRG_HI_B
+  sta MAP_PRG_HI_C
+  sta MAP_PRG_HI_D
+  sta MAP_PRG_HI_F
 
   ; set PRG configuration
   lda #PRG_RAM_MODE_0|PRG_ROM_MODE_0
@@ -195,7 +195,7 @@ apu_clear_loop:
 
   ; select 8K CHR bank
   lda #0
-  sta MAP_CHR_0_LO
+  sta MAP_CHR_LO_0
 
   ; set palette brightness
   lda #4

@@ -4,67 +4,67 @@
 ; PRG banking
 MAP_PRG_CONTROL         = $4100
 
-MAP_PRG_6_HI            = $4106
-MAP_PRG_7_HI            = $4107
-MAP_PRG_8_HI            = $4108
-MAP_PRG_9_HI            = $4109
-MAP_PRG_A_HI            = $410A
-MAP_PRG_B_HI            = $410B
-MAP_PRG_C_HI            = $410C
-MAP_PRG_D_HI            = $410D
-MAP_PRG_E_HI            = $410E
-MAP_PRG_F_HI            = $410F
+MAP_PRG_HI_6            = $4106
+MAP_PRG_HI_7            = $4107
+MAP_PRG_HI_8            = $4108
+MAP_PRG_HI_9            = $4109
+MAP_PRG_HI_A            = $410A
+MAP_PRG_HI_B            = $410B
+MAP_PRG_HI_C            = $410C
+MAP_PRG_HI_D            = $410D
+MAP_PRG_HI_E            = $410E
+MAP_PRG_HI_F            = $410F
 
 MAP_PRG_5               = $4115
-MAP_PRG_5_LO            = $4115
-MAP_PRG_6_LO            = $4116
-MAP_PRG_7_LO            = $4117
-MAP_PRG_8_LO            = $4118
-MAP_PRG_9_LO            = $4119
-MAP_PRG_A_LO            = $411A
-MAP_PRG_B_LO            = $411B
-MAP_PRG_C_LO            = $411C
-MAP_PRG_D_LO            = $411D
-MAP_PRG_E_LO            = $411E
-MAP_PRG_F_LO            = $411F
+MAP_PRG_LO_5            = $4115
+MAP_PRG_LO_6            = $4116
+MAP_PRG_LO_7            = $4117
+MAP_PRG_LO_8            = $4118
+MAP_PRG_LO_9            = $4119
+MAP_PRG_LO_A            = $411A
+MAP_PRG_LO_B            = $411B
+MAP_PRG_LO_C            = $411C
+MAP_PRG_LO_D            = $411D
+MAP_PRG_LO_E            = $411E
+MAP_PRG_LO_F            = $411F
 
 ; CHR banking
 MAP_CHR_CONTROL         = $4120
 MAP_BG_EXT_BANK         = $4121
 
-MAP_CHR_0_HI            = $4130
-MAP_CHR_1_HI            = $4131
-MAP_CHR_2_HI            = $4132
-MAP_CHR_3_HI            = $4133
-MAP_CHR_4_HI            = $4134
-MAP_CHR_5_HI            = $4135
-MAP_CHR_6_HI            = $4136
-MAP_CHR_7_HI            = $4137
-MAP_CHR_8_HI            = $4138
-MAP_CHR_9_HI            = $4139
-MAP_CHR_A_HI            = $413A
-MAP_CHR_B_HI            = $413B
-MAP_CHR_C_HI            = $413C
-MAP_CHR_D_HI            = $413D
-MAP_CHR_E_HI            = $413E
-MAP_CHR_F_HI            = $413F
+MAP_CHR_HI_0            = $4130
+MAP_CHR_HI_1            = $4131
+MAP_CHR_HI_2            = $4132
+MAP_CHR_HI_3            = $4133
+MAP_CHR_HI_4            = $4134
+MAP_CHR_HI_5            = $4135
+MAP_CHR_HI_6            = $4136
+MAP_CHR_HI_7            = $4137
+MAP_CHR_HI_8            = $4138
+MAP_CHR_HI_9            = $4139
+MAP_CHR_HI_A            = $413A
+MAP_CHR_HI_B            = $413B
+MAP_CHR_HI_C            = $413C
+MAP_CHR_HI_D            = $413D
+MAP_CHR_HI_E            = $413E
+MAP_CHR_HI_F            = $413F
 
-MAP_CHR_0_LO            = $4140
-MAP_CHR_1_LO            = $4141
-MAP_CHR_2_LO            = $4142
-MAP_CHR_3_LO            = $4143
-MAP_CHR_4_LO            = $4144
-MAP_CHR_5_LO            = $4145
-MAP_CHR_6_LO            = $4146
-MAP_CHR_7_LO            = $4147
-MAP_CHR_8_LO            = $4148
-MAP_CHR_9_LO            = $4149
-MAP_CHR_A_LO            = $414A
-MAP_CHR_B_LO            = $414B
-MAP_CHR_C_LO            = $414C
-MAP_CHR_D_LO            = $414D
-MAP_CHR_E_LO            = $414E
-MAP_CHR_F_LO            = $414F
+MAP_CHR_LO_0            = $4140
+MAP_CHR_LO_1            = $4141
+MAP_CHR_LO_2            = $4142
+MAP_CHR_LO_3            = $4143
+MAP_CHR_LO_4            = $4144
+MAP_CHR_LO_5            = $4145
+MAP_CHR_LO_6            = $4146
+MAP_CHR_LO_7            = $4147
+MAP_CHR_LO_8            = $4148
+MAP_CHR_LO_9            = $4149
+MAP_CHR_LO_A            = $414A
+MAP_CHR_LO_B            = $414B
+MAP_CHR_LO_C            = $414C
+MAP_CHR_LO_D            = $414D
+MAP_CHR_LO_E            = $414E
+MAP_CHR_LO_F            = $414F
 
 ; Fill-mode
 MAP_FILL_MODE_TILE      = $4124
@@ -100,12 +100,13 @@ MAP_CPU_IRQ_CONTROL     = $415A
 MAP_CPU_IRQ_ACK         = $415B
 
 ; FPGA RAM auto R/W
-MAP_BSRAM_RW_HI_ADD     = $415C
-MAP_BSRAM_RW_LO_ADD     = $415D
-MAP_BSRAM_RW_INC        = $415E
-MAP_BSRAM_RW_DATA       = $415F
+MAP_FPGA_RAM_RW_HI_ADD  = $415C
+MAP_FPGA_RAM_RW_LO_ADD  = $415D
+MAP_FPGA_RAM_RW_INC     = $415E
+MAP_FPGA_RAM_RW_DATA    = $415F
 
 ; Miscellaneaous
+MAP_CPU_M2_PARITY       = $4157
 MAP_VERSION             = $4160
 MAP_IRQ_STATUS          = $4161
 
@@ -149,32 +150,62 @@ MAP_SPR_EXT_LOWER_BANK  = $4200 ; $4200 ... $423F, one register for each sprite
 MAP_SPR_EXT_UPPER_BANK  = $4240
 
 ; Auto-generated OAM procedures
+MAP_OAM_SLOW_UPDATE_RAM = $4241
+MAP_OAM_EXT_UPDATE_RAM  = $4242
+MAP_OAM_SPRITE_LIMIT    = $4243
 MAP_OAM_SLOW_UPDATE     = $4280
 MAP_OAM_EXT_UPDATE      = $4282
-MAP_OAM_SLOW_CLEAR      = $4286
 
 ; ################################################################################
 ; MAPPER FLAGS / MASKS
 
+; PRG-ROM banking: modes ($4100)
 PRG_ROM_MODE_0          = %00000000 ; 32K
 PRG_ROM_MODE_1          = %00000001 ; 16K + 16K
 PRG_ROM_MODE_2          = %00000010 ; 16K + 8K + 8K
 PRG_ROM_MODE_3          = %00000011 ; 8K + 8K + 8K + 8K
 PRG_ROM_MODE_4          = %00000100 ; 4K + 4K + 4K + 4K + 4K + 4K + 4K + 4K
+
 PRG_ROM_MODE_MASK       = %00000111
 PRG_ROM_MODE_CLEAR      = PRG_ROM_MODE_MASK^$ff
 
+; PRG-RAM banking: modes ($4100)
 PRG_RAM_MODE_0          = %00000000 ; 8K
 PRG_RAM_MODE_1          = %10000000 ; 4K + 4K
+
 PRG_RAM_MODE_MASK       = %10000000
 PRG_RAM_MODE_CLEAR      = PRG_RAM_MODE_MASK^$ff
 
+; PRG-ROM banking: chip selector ($4108-$410F)
+PRG_ROM_CHIP_ROM        = %00000000
+PRG_ROM_CHIP_RAM        = %10000000
+
+PRG_ROM_CHIP_MASK       = %10000000
+PRG_ROM_CHIP_CLEAR      = PRG_ROM_CHIP_MASK^$ff
+
+; PRG-RAM banking: chip selector ($4106-$4107)
+PRG_RAM_CHIP_ROM        = %00000000
+PRG_RAM_CHIP_RAM        = %10000000
+PRG_RAM_CHIP_FPGA_RAM   = %11000000
+
+PRG_RAM_CHIP_MASK       = %11000000
+PRG_RAM_CHIP_CLEAR      = PRG_RAM_CHIP_MASK^$ff
+
+; PRG bank upper bits ($4106-$410F)
+PRG_BANK_HI_MASK        = %00000111
+PRG_BANK_HI_CLEAR       = PRG_BANK_HI_MASK^$ff
+
+; CHR-ROM banking: chip selector ($4120)
 CHR_CHIP_ROM            = %00000000 ; CHR-ROM
 CHR_CHIP_RAM            = %01000000 ; CHR-RAM
 CHR_CHIP_FPGA_RAM       = %10000000 ; FPGA-RAM
+CHR_CHIP_CIRAM          = %11000000 ; CIRAM
+
 CHR_CHIP_MASK           = %11000000
 CHR_CHIP_CLEAR          = CHR_CHIP_MASK^$ff
 
+; CHR-ROM banking: modes ($4120)
+WINDOW_SPLIT_MODE       = %00010000
 SPR_EXT_MODE            = %00100000
 
 CHR_MODE_0              = %00000000 ; 8K mode
@@ -182,24 +213,106 @@ CHR_MODE_1              = %00000001 ; 4K mode
 CHR_MODE_2              = %00000010 ; 2K mode
 CHR_MODE_3              = %00000011 ; 1K mode
 CHR_MODE_4              = %00000100 ; 512B mode
+
 CHR_MODE_MASK           = %00000111
 CHR_MODE_CLEAR          = CHR_MODE_MASK^$ff
 
+; CPU IRQ control ($415A)
+CPU_IRQ_ENABLE          = %00000001
+CPU_IRQ_ENABLE_ACK      = %00000010 ; enable after acknowledgement
+CPU_IRQ_ACK_IPCM        = %00000100 ; acknowledge on $4011 read
+
+; IRQ status ($4161)
+IRQ_STATUS_PPU          = %10000000
+IRQ_STATUS_CPU          = %01000000
+IRQ_STATUS_WIFI         = %00000001
+
+; PPU IRQ status ($4151)
+PPU_IRQ_HBLANK          = %10000000
+PPU_IRQ_IN_FRAME        = %01000000
+
+; CPU cycle parity ($4157)
+CPU_M2_PARITY_MASK      = %10000000
+
+; Vector redirection control ($416B)
+VECTOR_NMI_ENABLE       = %00000001
+VECTOR_IRQ_ENABLE       = %00000010
+
+; Wi-Fi configuration ($4190)
+RNBW_ENABLE             = %00000001
+RNBW_IRQ_ENABLE         = %00000010
+
+; Wi-Fi RX status ($4191)
+RNBW_RX_RECEIVED        = %10000000 ; message received in FPGA-RAM
+RNBW_RX_READY           = %01000000 ; message waiting on ESP side
+
+; Wi-Fi TX status ($4192)
+RNBW_TX_SENT            = %10000000
+
+; Audio output control ($41A9)
+SND_OUTPUT_EXP6         = %00000001
+SND_OUTPUT_EXP9         = %00000010
+SND_OUTPUT_IPCM         = %00000100
+
+; Audio master volume ($41AA)
+SND_MASTER_VOLUME_MASK  = %00001111
+
+; Mapper version ($4160)
+VERSION_MASK            = %00011111
+PLATFORM_MASK           = %11100000
+
+; Platform values, already shifted for comparison with PLATFORM_MASK
+PLATFORM_PCB            = %00000000
+PLATFORM_EMULATOR       = %00100000
+PLATFORM_WEB_EMULATOR   = %01000000
+PLATFORM_N8_PRO         = %01100000
+PLATFORM_N8             = %10000000
+
+; Nametable chip selector ($412A-$412D)
 NT_CIRAM                = %00000000
 NT_CHR_RAM              = %01000000
 NT_FPGA_RAM             = %10000000
 NT_CHR_ROM              = %11000000
 
+NT_CHIP_MASK            = %11000000
+NT_CHIP_CLEAR           = NT_CHIP_MASK^$ff
+
+; Nametable fill mode ($412A-$412D, $412F)
 NT_FILL_MODE            = %00100000
 
+; Nametable ext bank ($412A-$412D, $412F)
 NT_EXT_BANK_0           = %00000000
 NT_EXT_BANK_1           = %00000100
 NT_EXT_BANK_2           = %00001000
 NT_EXT_BANK_3           = %00001100
 
+NT_EXT_BANK_MASK        = %00001100
+NT_EXT_BANK_CLEAR       = NT_EXT_BANK_MASK^$ff
+
+; Nametable ext mode selector ($412A-$412D, $412F)
 NT_NO_EXT               = %00000000
 NT_EXT_AT               = %00000001
 NT_EXT_BG               = %00000010
 NT_EXT_BG_AT            = %00000011
 
-NT_BANK_IDX_MASK        = %00111111
+NT_EXT_MODE_MASK        = %00000011
+NT_EXT_MODE_CLEAR       = NT_EXT_MODE_MASK^$ff
+
+; Extended byte bits (AABBBBBB in FPGA-RAM)
+NT_EXT_TILE_MASK        = %00111111
+NT_EXT_TILE_CLEAR       = NT_EXT_TILE_MASK^$ff
+
+NT_EXT_PALETTE_MASK     = %11000000
+NT_EXT_PALETTE_CLEAR    = NT_EXT_PALETTE_MASK^$ff
+
+; ################################################################################
+; ADDITIONAL REGISTERS
+
+; IPCM sample (read)
+MAP_SND_IPCM_SAMPLE     = $4011
+
+; EPSM interface (write)
+MAP_EPSM_0             = $401C
+MAP_EPSM_1             = $401D
+MAP_EPSM_2             = $401E
+MAP_EPSM_3             = $401F
