@@ -3,7 +3,7 @@
 
 ; PPU
 
-.enum $0020
+.enum ZP_POS
 
 FRAME_CNT1          .dsb 1
 FRAME_CNT2          .dsb 1
@@ -60,6 +60,8 @@ padStateOld        .dsb 1
 padState           .dsb 1
 padPressed         .dsb 1
 padReleased        .dsb 1
+
+ZP_POS = $
 
 .ende
 

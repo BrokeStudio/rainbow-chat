@@ -1,14 +1,12 @@
-; ################################################################################
-; CONSTANTS
+; 888888888   ,adPPYba,  8b,dPPYba,   ,adPPYba,   8b,dPPYba,   ,adPPYYba,   ,adPPYb,d8   ,adPPYba,  
+;      a8P"  a8P_____88  88P'   "Y8  a8"     "8a  88P'    "8a  ""     `Y8  a8"    `Y88  a8P_____88  
+;   ,d8P'    8PP"""""""  88          8b       d8  88       d8  ,adPPPPP88  8b       88  8PP"""""""  
+; ,d8"       "8b,   ,aa  88          "8a,   ,a8"  88b,   ,a8"  88,    ,88  "8a,   ,d88  "8b,   ,aa  
+; 888888888   `"Ybbd8"'  88           `"YbbdP"'   88`YbbdP"'   `"8bbdP"Y8   `"YbbdP"Y8   `"Ybbd8"'  
+;                                                 88                        aa,    ,88              
+;                                                 88                         "Y8bbdP"               
 
-; uncomment this line to use hardcoded server hostname and port
-; see chatConnect in chat-connections.asm file
-;localhost EQU 1
-
-; ################################################################################
-; ZEROPAGE + MISC
-
-.enum $0050
+.enum ZP_POS
 
 cursorPos      .dsb 1  ; cursor position / index
 cursorHoldCnt  .dsb 1  ; cursor hold counter
@@ -27,7 +25,21 @@ hostname       .dsb 32 ; hostname string, max 32 characters
 hostnameLength .dsb 1  ; hostname length
 port           .dsb 2  ; port (converted from string to 16bit hex)
 
+ZP_POS = $
+
 .ende
+
+;                                                    ,d                               ,d                
+;                                                    88                               88                
+;  ,adPPYba,   ,adPPYba,   8b,dPPYba,   ,adPPYba,  MM88MMM  ,adPPYYba,  8b,dPPYba,  MM88MMM  ,adPPYba,  
+; a8"     ""  a8"     "8a  88P'   `"8a  I8[    ""    88     ""     `Y8  88P'   `"8a   88     I8[    ""  
+; 8b          8b       d8  88       88   `"Y8ba,     88     ,adPPPPP88  88       88   88      `"Y8ba,   
+; "8a,   ,aa  "8a,   ,a8"  88       88  aa    ]8I    88,    88,    ,88  88       88   88,    aa    ]8I  
+;  `"Ybbd8"'   `"YbbdP"'   88       88  `"YbbdP"'    "Y888  `"8bbdP"Y8  88       88   "Y888  `"YbbdP"'  
+
+; uncomment this line to use hardcoded server hostname and port
+; see chatConnect in chat-connections.asm file
+localhost EQU 1
 
 CURSOR_TILE         EQU $1e
 CURSOR_MAX_POS      EQU 90
@@ -39,15 +51,28 @@ CHAT_STATES_PORT      EQU 1
 CHAT_STATES_USERNAME  EQU 2
 CHAT_STATES_CHAT      EQU 3
 
-; ################################################################################
-; INCLUDES
+; 88                           88                        88                         
+; ""                           88                        88                         
+;                              88                        88                         
+; 88  8b,dPPYba,    ,adPPYba,  88  88       88   ,adPPYb,88   ,adPPYba,  ,adPPYba,  
+; 88  88P'   `"8a  a8"     ""  88  88       88  a8"    `Y88  a8P_____88  I8[    ""  
+; 88  88       88  8b          88  88       88  8b       88  8PP"""""""   `"Y8ba,   
+; 88  88       88  "8a,   ,aa  88  "8a,   ,a88  "8a,   ,d88  "8b,   ,aa  aa    ]8I  
+; 88  88       88   `"Ybbd8"'  88   `"YbbdP'Y8   `"8bbdP"Y8   `"Ybbd8"'  `"YbbdP"'  
+
 
 .include "chat-settings.asm"
 .include "chat-connection.asm"
 .include "chat-message-handler.asm"
 
-; ################################################################################
-; CODE
+;                                   88              
+;                                   88              
+;                                   88              
+;  ,adPPYba,   ,adPPYba,    ,adPPYb,88   ,adPPYba,  
+; a8"     ""  a8"     "8a  a8"    `Y88  a8P_____88  
+; 8b          8b       d8  8b       88  8PP"""""""  
+; "8a,   ,aa  "8a,   ,a8"  "8a,   ,d88  "8b,   ,aa  
+;  `"Ybbd8"'   `"YbbdP"'    `"8bbdP"Y8   `"Ybbd8"'  
 
 startChat:
 
@@ -481,8 +506,14 @@ processData:
 
 
 
-; ################################################################################
-; DATA
+;          88                                   
+;          88                ,d                 
+;          88                88                 
+;  ,adPPYb,88  ,adPPYYba,  MM88MMM  ,adPPYYba,  
+; a8"    `Y88  ""     `Y8    88     ""     `Y8  
+; 8b       88  ,adPPPPP88    88     ,adPPPPP88  
+; "8a,   ,d88  88,    ,88    88,    88,    ,88  
+;  `"8bbdP"Y8  `"8bbdP"Y8    "Y888  `"8bbdP"Y8  
 
 chatNT:
   .incbin "gfx/chat.rle"

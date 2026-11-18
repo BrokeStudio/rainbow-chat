@@ -57,6 +57,8 @@
     zp30  .dsb 1
     zp31  .dsb 1
 
+    ZP_POS = $
+
   .ende
 
   .base $8000
